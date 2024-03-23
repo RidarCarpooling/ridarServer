@@ -4,14 +4,14 @@ const crypto = require('crypto');
 require('dotenv').config();
 
 
-const app = express()
-const port = 3000
-app.get('/', (req, res) => {
- res.send('Hello World!')
-})
-app.listen(port, () => {
- console.log(`Server running at http://localhost:${port}`)
-})
+// const app = express()
+// const port = 3000
+// app.get('/', (req, res) => {
+//  res.send('Hello World!')
+// })
+// app.listen(port, () => {
+//  console.log(`Server running at http://localhost:${port}`)
+// })
 
 // 綠界提供的 SDK
 const ecpay_payment = require('ecpay_aio_nodejs');
