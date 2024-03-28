@@ -10,13 +10,13 @@ spec.loader.exec_module(module)
 from datetime import datetime
 
 
-def main():
+def main(totalAmount):
     order_params = {
         'MerchantTradeNo': datetime.now().strftime("NO%Y%m%d%H%M%S"),
         'StoreID': '',
         'MerchantTradeDate': datetime.now().strftime("%Y/%m/%d %H:%M:%S"),
         'PaymentType': 'aio',
-        'TotalAmount': 2000,
+        'TotalAmount': totalAmount,
         'TradeDesc': '訂單測試',
         'ItemName': '商品1#商品2',
         'ReturnURL': 'https://www.ecpay.com.tw/return_url.php',
