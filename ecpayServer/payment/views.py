@@ -4,7 +4,7 @@ from .testEcpay import main
 
 @csrf_exempt
 def index(request):
-    allowed_referrer = "https://ridar.com.tw"  # Replace with the URL of the specific website
+    allowed_referrer = ["https://ridar.com.tw", 'https://vercel.com/']  # Replace with the URL of the specific website
 
     # Check if the request has a referrer
     if 'HTTP_REFERER' in request.META:
