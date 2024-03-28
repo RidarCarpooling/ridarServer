@@ -1,0 +1,14 @@
+{
+    "builds": [
+      {
+        "src": "ecpayServer/wsgi.py",
+        "use": "@vercel/python"
+      }
+    ],
+    "routes": [
+      {
+        "src": "/(.*)",
+        "dest": "ecpayServer/wsgi.py"
+      }
+    ]
+}
