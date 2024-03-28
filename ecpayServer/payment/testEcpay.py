@@ -3,7 +3,7 @@
 import importlib.util
 spec = importlib.util.spec_from_file_location(
     "ecpay_payment_sdk",
-    "payment/ecpay_payment_sdk.py"
+    "ecpay_payment_sdk.py"
 )
 module = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(module)
@@ -19,13 +19,13 @@ def main(totalAmount):
         'TotalAmount': totalAmount,
         'TradeDesc': '訂單測試',
         'ItemName': '商品1#商品2',
-        'ReturnURL': 'https://www.ecpay.com.tw/return_url.php',
+        'ReturnURL': 'https://ridar-server.vercel.app',
         'ChoosePayment': 'ALL',
-        'ClientBackURL': 'https://www.ecpay.com.tw/client_back_url.php',
+        'ClientBackURL': 'https://ridar.com.tw',
         'ItemURL': 'https://www.ecpay.com.tw/item_url.php',
         'Remark': '交易備註',
         'ChooseSubPayment': '',
-        'OrderResultURL': 'https://www.ecpay.com.tw/order_result_url.php',
+        'OrderResultURL': 'https://ridar.com.tw',
         'NeedExtraPaidInfo': 'Y',
         'DeviceSource': '',
         'IgnorePayment': '',
