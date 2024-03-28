@@ -69,8 +69,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'ecpayServer.wsgi.application'
 
-CSRF_TRUSTED_ORIGINS = ["https://ridar.com.tw"]
-
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
