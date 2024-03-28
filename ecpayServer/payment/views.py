@@ -6,7 +6,6 @@ from .testEcpay import main
 def index(request):
     allowed_referrer = ["https://ridar.com.tw", 'https://vercel.com/']  # Replace with the URL of the specific website
 
-    print(request.META.HTTP_REFERER)
     # Check if the request has a referrer
     if 'HTTP_REFERER' in request.META:
         referrer = request.META['HTTP_REFERER']
