@@ -1,7 +1,7 @@
 from firebase_admin import firestore, initialize_app
 import os
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "ridar-e1rlvk-firebase-adminsdk-31um4-04d2182145.json"
-
+# os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "ridar-e1rlvk-firebase-adminsdk-31um4-04d2182145.json"
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = os.environ.get('GOOGLE_APPLICATION_CREDENTIALS')
 initialize_app()
 
 def create_transaction_document(transaction_data, orderId):
