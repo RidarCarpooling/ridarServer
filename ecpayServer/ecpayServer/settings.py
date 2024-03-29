@@ -31,6 +31,8 @@ ALLOWED_HOSTS = ['.vercel.app', '.now.sh', '127.0.0.1']
 # Application definition
 
 INSTALLED_APPS = [
+    "payment.apps.PaymentConfig",
+    "receive_result.apps.ReceiveResultConfig",
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -109,7 +111,6 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/

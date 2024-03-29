@@ -10,59 +10,60 @@ spec.loader.exec_module(module)
 from datetime import datetime
 
 
-def main(totalAmount):
+def main(totalAmount, orderId, transactionTime, buyerId, tripReference):
     order_params = {
-        'MerchantTradeNo': datetime.now().strftime("NO%Y%m%d%H%M%S"),
-        'StoreID': '',
-        'MerchantTradeDate': datetime.now().strftime("%Y/%m/%d %H:%M:%S"),
+        'MerchantTradeNo':  orderId,
+        # datetime.now().strftime("NO%Y%m%d%H%M%S"),
+        # 'StoreID': '',
+        'MerchantTradeDate': transactionTime.strftime("%Y/%m/%d %H:%M:%S"),
         'PaymentType': 'aio',
         'TotalAmount': totalAmount,
         'TradeDesc': '訂單測試',
-        'ItemName': '商品1#商品2',
+        'ItemName': '旅程',
         'ReturnURL': 'https://ridar-server.vercel.app/return',
         'ChoosePayment': 'ALL',
-        'ClientBackURL': 'https://ridar.com.tw',
+        'ClientBackURL': 'https://ridar.com.tw/trips',
         'ItemURL': 'https://www.ecpay.com.tw/item_url.php',
         'Remark': '交易備註',
-        'ChooseSubPayment': '',
-        'OrderResultURL': 'https://ridar.com.tw',
-        'NeedExtraPaidInfo': 'Y',
-        'DeviceSource': '',
-        'IgnorePayment': '',
-        'PlatformID': '',
-        'InvoiceMark': 'N',
-        'CustomField1': '',
-        'CustomField2': '',
-        'CustomField3': '',
-        'CustomField4': '',
+        # 'ChooseSubPayment': '',
+        'OrderResultURL': 'https://ridar.com.tw/',
+        # 'NeedExtraPaidInfo': 'Y',
+        # 'DeviceSource': '',
+        'IgnorePayment': 'ATM#CVS#BARCODE#BNPL',
+        # 'PlatformID': '',
+        # 'InvoiceMark': 'N',
+        'CustomField1': buyerId,
+        'CustomField2': tripReference,
+        # 'CustomField3': '',
+        # 'CustomField4': '',
         'EncryptType': 1,
     }
 
-    extend_params_1 = {
-        'ExpireDate': 7,
-        'PaymentInfoURL': 'https://www.ecpay.com.tw/payment_info_url.php',
-        'ClientRedirectURL': '',
-    }
+    # extend_params_1 = {
+    #     'ExpireDate': 7,
+        # 'PaymentInfoURL': 'https://www.ecpay.com.tw/payment_info_url.php',
+    #     'ClientRedirectURL': '',
+    # }
 
-    extend_params_2 = {
-        'StoreExpireDate': 15,
-        'Desc_1': '',
-        'Desc_2': '',
-        'Desc_3': '',
-        'Desc_4': '',
-        'PaymentInfoURL': 'https://www.ecpay.com.tw/payment_info_url.php',
-        'ClientRedirectURL': '',
-    }
+    # extend_params_2 = {
+    #     'StoreExpireDate': 15,
+    #     'Desc_1': '',
+    #     'Desc_2': '',
+    #     'Desc_3': '',
+    #     'Desc_4': '',
+    #     'PaymentInfoURL': 'https://www.ecpay.com.tw/payment_info_url.php',
+    #     'ClientRedirectURL': '',
+    # }
 
-    extend_params_3 = {
-        'BindingCard': 0,
-        'MerchantMemberID': '',
-    }
+    # extend_params_3 = {
+    #     'BindingCard': 0,
+    #     'MerchantMemberID': '',
+    # }
 
-    extend_params_4 = {
-        'Redeem': 'N',
-        'UnionPay': 0,
-    }
+    # extend_params_4 = {
+    #     'Redeem': 'N',
+    #     'UnionPay': 0,
+    # }
 
     inv_params = {
         # 'RelateNumber': 'Tea0001', # 特店自訂編號
@@ -97,13 +98,13 @@ def main(totalAmount):
     )
 
     # 合併延伸參數
-    order_params.update(extend_params_1)
-    order_params.update(extend_params_2)
-    order_params.update(extend_params_3)
-    order_params.update(extend_params_4)
+    # order_params.update(extend_params_1)
+    # order_params.update(extend_params_2)
+    # order_params.update(extend_params_3)
+    # order_params.update(extend_params_4)
 
     # 合併發票參數
-    order_params.update(inv_params)
+    # order_params.update(inv_params)
 
     try:
         # 產生綠界訂單所需參數
