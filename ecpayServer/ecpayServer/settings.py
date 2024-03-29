@@ -131,7 +131,7 @@ from firebase_admin import credentials
 
 # Path to the Firebase service account credentials JSON file
 # FIREBASE_CREDENTIALS_PATH = os.path.join(BASE_DIR, 'ridar-e1rlvk-firebase-adminsdk-31um4-04d2182145.json')
-
+print(os.environ.get("PROJECT_ID"), os.environ.get("PRIVATE_KEY_ID"), os.environ.get("PRIVATE_KEY").replace('\\n', '\n'))
 cred = credentials.Certificate({
         "type": "service_account",
         "project_id": os.environ.get("PROJECT_ID"),
