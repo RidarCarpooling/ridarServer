@@ -146,4 +146,4 @@ cred = credentials.Certificate({
     })
 # Initialize Firebase
 # cred = credentials.Certificate(FIREBASE_CREDENTIALS_PATH)
-firebase_admin.initialize_app(cred)
+firebase_admin.initialize_app(credential=cred)
