@@ -19,7 +19,7 @@ def main(totalAmount):
         'TotalAmount': totalAmount,
         'TradeDesc': '訂單測試',
         'ItemName': '商品1#商品2',
-        'ReturnURL': 'https://ridar-server.vercel.app',
+        'ReturnURL': 'https://ridar-server.vercel.app/return',
         'ChoosePayment': 'ALL',
         'ClientBackURL': 'https://ridar.com.tw',
         'ItemURL': 'https://www.ecpay.com.tw/item_url.php',
