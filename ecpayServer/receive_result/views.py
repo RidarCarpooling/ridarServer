@@ -16,7 +16,7 @@ def receive_payment_info(request):
         result = read_transaction_from_firebase(merchant_trade_no)
         transaction_time = result.get('transactionTime', '')
         buyerId = result.get('user', '').id
-        tripReference = result.get('tripRef', '').id
+        tripReference = tripReference.id if tripReference else ''
 
         print(merchant_trade_no)
         checkMac = genCheckMacValue(merchant_trade_no, transaction_time, trade_amt, buyerId, tripReference)
