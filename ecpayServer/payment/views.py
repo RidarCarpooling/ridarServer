@@ -14,9 +14,10 @@ def index(request):
     if not result:
         return HttpResponseNotFound("Order not found")
 
-    total_amount = result.get('totalAmount', 0)
+    total_amount = result.get('price', 0)
+
     transaction_time = result.get('transactionTime', '')
     buyerId = result.get('user', '')
-    tripReference = result.get('tripRef', '')
+    tripReference = result.get('tripId', '')
 
     return HttpResponse(main(total_amount, orderId, transaction_time, buyerId, tripReference))
