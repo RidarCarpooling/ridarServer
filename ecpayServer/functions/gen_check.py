@@ -25,13 +25,16 @@ def genCheckMacValue(orderId, transactionTime, price, buyerId, tripId):
     }
 
     sortedParams = sorted(queryParams.items(), key=lambda x: x[0])
+    print(sortedParams)
     combinedParams = ''.join([f'{key}={value}&' for key, value in sortedParams])
+    print(sortedParams)
     combinedParams = f'HashKey={hashKey}&{combinedParams}HashIV={hashIV}'
+    print(combinedParams)
 
     encodedParams = quote(combinedParams, safe='')
     encodedParams = encodedParams.replace('%2d', '-').replace('%5f', '_').replace('%2e', '.').replace('%21', '!').replace('%2a', '*').replace('%28', '(').replace('%29', ')').replace('%20', '+')
-
-    hashedParams = hashlib.sha256(encodedParams.encode()).hexdigest()
+    encodedParamsLower = encodedParams.lower()
+    hashedParams = hashlib.sha256(encodedParamsLower.encode()).hexdigest()
     return hashedParams.upper()
 
 
