@@ -18,12 +18,8 @@ def receive_payment_info(request):
         buyerId = result.get('user', '').id
         tripReference = result.get('tripReference') if result.get('tripReference') else ''
 
-        print(merchant_trade_no)
-        checkMac = genCheckMacValue(merchant_trade_no, transaction_time, trade_amt, buyerId, tripReference)
-        print(check_mac_value == checkMac)
-        print(checkMac)
-        print(check_mac_value)
-
+        checkMac = genCheckMacValue(orderId=merchant_trade_no, transactionTime=transaction_time, price=trade_amt, buyerId=buyerId, tripId=tripReference)
+        
         if (rtn_code == 1 and check_mac_value == checkMac):
             print('matching')
             # update transaction: status, trade_no, create docs, and ....
