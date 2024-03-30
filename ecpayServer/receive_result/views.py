@@ -17,8 +17,6 @@ def receive_payment_info(request):
         transaction_time = result.get('transactionTime', '')
         buyerId = result.get('user', '').id
         tripReference = result.get('tripReference') if result.get('tripReference') else ''
-        print(trade_amt)
-        print(transaction_time)
         checkMac = genCheckMacValue(orderId=merchant_trade_no, transactionTime=transaction_time, price=trade_amt, buyerId=buyerId, tripId=tripReference)
         
         print(checkMac)

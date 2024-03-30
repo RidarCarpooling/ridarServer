@@ -12,12 +12,12 @@ from datetime import datetime
 
 def main(totalAmount, orderId, transactionTime, buyerId, tripReference):
     order_params = {
-        'MerchantTradeNo':  orderId,
+        'MerchantTradeNo':  '1234567',
         # datetime.now().strftime("NO%Y%m%d%H%M%S"),
         # 'StoreID': '',
-        'MerchantTradeDate': transactionTime.strftime("%Y/%m/%d %H:%M:%S"),
+        'MerchantTradeDate': '2023/12/11 10:23:24',
         'PaymentType': 'aio',
-        'TotalAmount': totalAmount,
+        'TotalAmount': 350,
         'TradeDesc': '訂單測試',
         'ItemName': '旅程',
         'ReturnURL': 'https://ridar-server.vercel.app/return',
