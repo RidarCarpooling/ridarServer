@@ -1,5 +1,5 @@
 import hashlib
-from urllib.parse import quote
+from urllib.parse import quote_plus
 
 def genCheckMacValue(orderId, transactionTime, price, buyerId, tripId):
     hashKey = '5294y06JbISpM5x9'  
@@ -27,15 +27,20 @@ def genCheckMacValue(orderId, transactionTime, price, buyerId, tripId):
     sortedParams = sorted(queryParams.items(), key=lambda x: x[0])
     combinedParams = ''.join([f'{key}={value}&' for key, value in sortedParams])
     combinedParams = f'HashKey={hashKey}&{combinedParams}HashIV={hashIV}'
-    print(combinedParams)
+    safe_characters = '-_.!*()'
+    encoding_str = quote_plus(str(combinedParams), safe=safe_characters).lower()
+    check_mac_value = hashlib.sha256(
+        encoding_str.encode('utf-8')).hexdigest().upper()
 
-    encodedParams = quote(combinedParams, safe='')
-    print(encodedParams)
-    encodedParams = encodedParams.replace('%2d', '-').replace('%5f', '_').replace('%2e', '.').replace('%21', '!').replace('%2a', '*').replace('%28', '(').replace('%29', ')').replace('%20', '+')
-    encodedParamsLower = encodedParams.lower()
-    print(encodedParamsLower)
-    hashedParams = hashlib.sha256(encodedParamsLower.encode()).hexdigest()
-    return hashedParams.upper()
+    return check_mac_value
 
 
 
+# import datetime
+# orderId = 'EC123456'
+# transactionTime = datetime.datetime.now()
+# price = 1000
+# buyerId = 'buyer123'
+# tripId = 'trip456'
+# checkMacValue = genCheckMacValue(orderId, transactionTime, price, buyerId, tripId)
+# print(checkMacValue)
