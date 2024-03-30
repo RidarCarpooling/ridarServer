@@ -5,14 +5,13 @@
 #     hashKey = 'pwFHCqoQZGmho4w6'  
 #     hashIV = 'EkRm7iFT261dpevs'  
 
-#     print(orderId, transactionTime, price, buyerId, tripId)
 #     queryParams = {
 #         'MerchantID': '3002607',
 #         'MerchantTradeNo': orderId,
-#         'MerchantTradeDate': transactionTime.strftime("%Y/%m/%d %H:%M:%S"),
+#         'MerchantTradeDate': transactionTime,
 #         'PaymentType': 'aio',
 #         'TotalAmount': 350,
-#         'TradeDesc': '促銷方案',
+#         'TradeDesc': '訂單測試',
 #         'ItemName': '旅程',
 #         'ReturnURL': 'https://ridar-server.vercel.app/return',
 #         # 'OrderResultURL': 'https://ridar-server.vercel.app/clientResult',
@@ -40,20 +39,16 @@
 
 
 
-# # import datetime
-# # orderId = 'ridar202403301651175'
-# # transactionTime = "2024/03/30 16:51:17"
-# # price = 350
-# # buyerId = 'xOSutkNOS3TmnW4pMPyXouA2Ew43'
-# # tripId = ''
-# # checkMacValue = genCheckMacValue(orderId, transactionTime, price, buyerId, tripId)
-# # print(checkMacValue)
+# import datetime
+# orderId = 'ridar202403301651175'
+# transactionTime = "2024/03/30 16:51:17"
+# price = 350
+# buyerId = 'xOSutkNOS3TmnW4pMPyXouA2Ew43'
+# tripId = ''
+# checkMacValue = genCheckMacValue(orderId, transactionTime, price, buyerId, tripId)
+# print(checkMacValue)
 
 import importlib.util
-import hashlib
-from urllib.parse import quote_plus
-import collections
-import copy
 
 # Create module specification
 def gen_check_mac_value(orderId, transactionTime):
@@ -102,7 +97,5 @@ def gen_check_mac_value(orderId, transactionTime):
 
     # Call the generate_check_value method
     check_mac_value = ecpay_sdk.generate_check_value(params)
-
     # Now you have the check MAC value
-    print(check_mac_value)
     return check_mac_value
