@@ -15,15 +15,15 @@ def receive_payment_info(request):
 
         result = read_transaction_from_firebase(merchant_trade_no)
         transaction_time = result.get('transactionTime', '')
-        buyerId = result.get('user', '')
-        tripReference = result.get('tripRef', '')
+        buyerId = result.get('user', '').id
+        tripReference = result.get('tripRef', '').id
 
         print(merchant_trade_no)
         checkMac = genCheckMacValue(merchant_trade_no, transaction_time, trade_amt, buyerId, tripReference)
         print(check_mac_value == checkMac)
         print(checkMac)
         print(check_mac_value)
-        
+
         if (rtn_code == 1 and check_mac_value == checkMac):
             print('matching')
             # update transaction: status, trade_no, create docs, and ....
