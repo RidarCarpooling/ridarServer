@@ -22,14 +22,14 @@ def genCheckMacValue(orderId, transactionTime, price, buyerId, tripId):
         # 'IgnorePayment': 'ATM#CVS#BARCODE#BNPL',
         # 'CustomField1': buyerId,
         # 'CustomField2': tripId,
-        'EncryptType': '1',
+        'EncryptType': 1,
     }
 
     sortedParams = sorted(queryParams.items(), key=lambda x: x[0])
     print(sortedParams)
     combinedParams = ''.join([f'{key}={value}&' for key, value in sortedParams])
     combinedParams = f'HashKey={hashKey}&{combinedParams}HashIV={hashIV}'
-    safe_characters = '-_.!*()'
+    safe_characters = '-_.!*()+'
     print(combinedParams)
     encoding_str = quote_plus(str(combinedParams), safe=safe_characters).lower()
     print(encoding_str)
