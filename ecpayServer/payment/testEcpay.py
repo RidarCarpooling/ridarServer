@@ -26,7 +26,7 @@ def main(totalAmount, orderId, transactionTime, buyerId, tripReference):
         # 'ItemURL': 'https://www.ecpay.com.tw/item_url.php',
         'Remark': '交易備註',
         # 'ChooseSubPayment': '',
-        'OrderResultURL': 'https://ridar-server.vercel.app/clientResult',
+        # 'OrderResultURL': 'https://ridar-server.vercel.app/clientResult',
         # 'NeedExtraPaidInfo': 'Y',
         # 'DeviceSource': '',
         'IgnorePayment': 'ATM#CVS#BARCODE#BNPL',
