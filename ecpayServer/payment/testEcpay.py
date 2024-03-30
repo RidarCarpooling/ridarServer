@@ -11,10 +11,8 @@ from datetime import datetime
 
 
 def main(totalAmount, orderId, transactionTime, buyerId, tripReference):
-    print(totalAmount, orderId, transactionTime, buyerId, tripReference)
 
     order_params = {
-        "MerchantId": "3002607",
         'MerchantTradeNo':  orderId,
         # datetime.now().strftime("NO%Y%m%d%H%M%S"),
         # 'StoreID': '',
@@ -43,6 +41,7 @@ def main(totalAmount, orderId, transactionTime, buyerId, tripReference):
     }
 
 
+    print(order_params)
     # extend_params_1 = {
     #     'ExpireDate': 7,
         # 'PaymentInfoURL': 'https://www.ecpay.com.tw/payment_info_url.php',
