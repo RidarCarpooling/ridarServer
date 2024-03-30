@@ -10,7 +10,6 @@ def genCheckMacValue(orderId, transactionTime, price, buyerId, tripId):
         'MerchantID': '3002607',
         'MerchantTradeNo': orderId,
         'MerchantTradeDate': transactionTime.strftime("%Y/%m/%d %H:%M:%S"),
-        # transactionTime.strftime("%Y/%m/%d %H:%M:%S"),
         'PaymentType': 'aio',
         'TotalAmount': 350,
         'TradeDesc': '訂單測試',
@@ -41,11 +40,11 @@ def genCheckMacValue(orderId, transactionTime, price, buyerId, tripId):
 
 
 
-import datetime
-orderId = 'ridar202403301651175'
-transactionTime = "2024/03/30 16:51:17"
-price = 350
-buyerId = 'xOSutkNOS3TmnW4pMPyXouA2Ew43'
-tripId = ''
-checkMacValue = genCheckMacValue(orderId, transactionTime, price, buyerId, tripId)
-print(checkMacValue)
+# import datetime
+# orderId = 'ridar202403301651175'
+# transactionTime = "2024/03/30 16:51:17"
+# price = 350
+# buyerId = 'xOSutkNOS3TmnW4pMPyXouA2Ew43'
+# tripId = ''
+# checkMacValue = genCheckMacValue(orderId, transactionTime, price, buyerId, tripId)
+# print(checkMacValue)
