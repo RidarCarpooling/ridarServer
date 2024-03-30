@@ -5,10 +5,12 @@ def genCheckMacValue(orderId, transactionTime, price, buyerId, tripId):
     hashKey = 'pwFHCqoQZGmho4w6'  
     hashIV = 'EkRm7iFT261dpevs'  
 
+    print(orderId, transactionTime, price, buyerId, tripId)
     queryParams = {
         'MerchantID': '3002607',
         'MerchantTradeNo': orderId,
         'MerchantTradeDate': transactionTime.strftime("%Y/%m/%d %H:%M:%S"),
+        # transactionTime.strftime("%Y/%m/%d %H:%M:%S"),
         'PaymentType': 'aio',
         'TotalAmount': 350,
         'TradeDesc': '訂單測試',
@@ -25,10 +27,13 @@ def genCheckMacValue(orderId, transactionTime, price, buyerId, tripId):
     }
 
     sortedParams = sorted(queryParams.items(), key=lambda x: x[0])
+    print(sortedParams)
     combinedParams = ''.join([f'{key}={value}&' for key, value in sortedParams])
     combinedParams = f'HashKey={hashKey}&{combinedParams}HashIV={hashIV}'
     safe_characters = '-_.!*()'
+    print(combinedParams)
     encoding_str = quote_plus(str(combinedParams), safe=safe_characters).lower()
+    print(encoding_str)
     check_mac_value = hashlib.sha256(
         encoding_str.encode('utf-8')).hexdigest().upper()
 
@@ -37,9 +42,9 @@ def genCheckMacValue(orderId, transactionTime, price, buyerId, tripId):
 
 
 import datetime
-orderId = 'ridar202403301627389'
-transactionTime = datetime.datetime.now()
-price = 1000
+orderId = 'ridar202403301651175'
+transactionTime = "2024/03/30 16:51:17"
+price = 350
 buyerId = 'xOSutkNOS3TmnW4pMPyXouA2Ew43'
 tripId = ''
 checkMacValue = genCheckMacValue(orderId, transactionTime, price, buyerId, tripId)

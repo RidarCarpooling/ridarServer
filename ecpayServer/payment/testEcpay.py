@@ -11,6 +11,7 @@ from datetime import datetime
 
 
 def main(totalAmount, orderId, transactionTime, buyerId, tripReference):
+    print(totalAmount, orderId, transactionTime, buyerId, tripReference)
     order_params = {
         'MerchantTradeNo':  orderId,
         # datetime.now().strftime("NO%Y%m%d%H%M%S"),
@@ -38,6 +39,7 @@ def main(totalAmount, orderId, transactionTime, buyerId, tripReference):
         # 'CustomField4': '',
         'EncryptType': 1,
     }
+
 
     # extend_params_1 = {
     #     'ExpireDate': 7,
