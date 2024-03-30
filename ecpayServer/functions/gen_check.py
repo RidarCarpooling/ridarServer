@@ -6,9 +6,9 @@ def genCheckMacValue(orderId, transactionTime, price, buyerId, tripId):
     hashIV = 'EkRm7iFT261dpevs'  
 
     queryParams = {
-        'MerchantID': '2000132',
-        'MerchantTradeNo': "ridar202403301627389",
-        'MerchantTradeDate': "2024/03/30 16:27:38",
+        'MerchantID': '3002607',
+        'MerchantTradeNo': orderId,
+        'MerchantTradeDate': transactionTime.strftime("%Y/%m/%d %H:%M:%S"),
         'PaymentType': 'aio',
         'TotalAmount': 350,
         'TradeDesc': '訂單測試',
@@ -16,11 +16,11 @@ def genCheckMacValue(orderId, transactionTime, price, buyerId, tripId):
         'ReturnURL': 'https://ridar-server.vercel.app/return',
         # 'OrderResultURL': 'https://ridar-server.vercel.app/clientResult',
         'ChoosePayment': 'ALL',
-        'ClientBackURL': f'https://ridar.com.tw/paymentResult/{orderId}?tripRef={tripId}',
-        'Remark': '交易備註',
-        'IgnorePayment': 'ATM#CVS#BARCODE#BNPL',
-        'CustomField1': buyerId,
-        'CustomField2': tripId,
+        # 'ClientBackURL': f'https://ridar.com.tw/paymentResult/{orderId}?tripRef={tripId}',
+        # 'Remark': '交易備註',
+        # 'IgnorePayment': 'ATM#CVS#BARCODE#BNPL',
+        # 'CustomField1': buyerId,
+        # 'CustomField2': tripId,
         'EncryptType': '1',
     }
 
@@ -36,11 +36,11 @@ def genCheckMacValue(orderId, transactionTime, price, buyerId, tripId):
 
 
 
-# import datetime
-# orderId = 'EC123456'
-# transactionTime = datetime.datetime.now()
-# price = 1000
-# buyerId = 'buyer123'
-# tripId = 'trip456'
-# checkMacValue = genCheckMacValue(orderId, transactionTime, price, buyerId, tripId)
-# print(checkMacValue)
+import datetime
+orderId = 'ridar202403301627389'
+transactionTime = datetime.datetime.now()
+price = 1000
+buyerId = 'xOSutkNOS3TmnW4pMPyXouA2Ew43'
+tripId = ''
+checkMacValue = genCheckMacValue(orderId, transactionTime, price, buyerId, tripId)
+print(checkMacValue)
