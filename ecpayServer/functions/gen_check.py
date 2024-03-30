@@ -19,8 +19,8 @@ def genCheckMacValue(orderId, transactionTime, price, buyerId, tripId):
         'ClientBackURL': f'https://ridar.com.tw/paymentResult/{orderId}?tripRef={tripId}',
         'Remark': '交易備註',
         'IgnorePayment': 'ATM#CVS#BARCODE#BNPL',
-        'CustomField1': buyerId,
-        'CustomField2': tripId,
+        # 'CustomField1': buyerId,
+        # 'CustomField2': tripId,
         'EncryptType': '1',
     }
 
