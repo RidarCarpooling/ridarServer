@@ -16,7 +16,7 @@ def genCheckMacValue(orderId, transactionTime, price, buyerId, tripId):
         'ReturnURL': 'https://ridar-server.vercel.app/return',
         # 'OrderResultURL': 'https://ridar-server.vercel.app/clientResult',
         'ChoosePayment': 'ALL',
-        'ClientBackURL': f'https://ridar.com.tw/paymentResult/${orderId}?tripRef=${tripId}',
+        'ClientBackURL': f'https://ridar.com.tw/paymentResult/{orderId}?tripRef={tripId}',
         'Remark': '交易備註',
         'IgnorePayment': 'ATM#CVS#BARCODE#BNPL',
         'CustomField1': buyerId,
@@ -26,7 +26,7 @@ def genCheckMacValue(orderId, transactionTime, price, buyerId, tripId):
 
     sortedParams = sorted(queryParams.items(), key=lambda x: x[0])
     combinedParams = ''.join([f'{key}={value}&' for key, value in sortedParams])
-    combinedParams += f'HashKey={hashKey}&HashIV={hashIV}'
+    combinedParams = f'HashKey={hashKey}&{combinedParams}HashIV={hashIV}'
 
     encodedParams = quote(combinedParams, safe='')
     encodedParams = encodedParams.replace('%2d', '-').replace('%5f', '_').replace('%2e', '.').replace('%21', '!').replace('%2a', '*').replace('%28', '(').replace('%29', ')').replace('%20', '+')
