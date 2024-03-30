@@ -2,11 +2,11 @@ import hashlib
 from urllib.parse import quote_plus
 
 def genCheckMacValue(orderId, transactionTime, price, buyerId, tripId):
-    hashKey = '5294y06JbISpM5x9'  
-    hashIV = 'v77hoKGq4kWxNNIS'  
+    hashKey = 'pwFHCqoQZGmho4w6'  
+    hashIV = 'EkRm7iFT261dpevs'  
 
     queryParams = {
-        'MerchantID': '2000132',
+        'MerchantID': '3002607',
         'MerchantTradeNo': orderId,
         'MerchantTradeDate': transactionTime.strftime("%Y/%m/%d %H:%M:%S"),
         'PaymentType': 'aio',
