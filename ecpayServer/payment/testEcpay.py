@@ -12,7 +12,7 @@ from datetime import datetime
 
 def main(totalAmount, orderId, transactionTime, buyerId, tripReference):
     order_params = {
-        'MerchantTradeNo':  '1234567',
+        'MerchantTradeNo':  'ridar135790',
         # datetime.now().strftime("NO%Y%m%d%H%M%S"),
         # 'StoreID': '',
         'MerchantTradeDate': '2023/12/11 10:23:24',

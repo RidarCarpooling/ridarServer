@@ -7,7 +7,7 @@ def genCheckMacValue(orderId, transactionTime, price, buyerId, tripId):
 
     queryParams = {
         'MerchantID': '3002607',
-        'MerchantTradeNo': '1234567',
+        'MerchantTradeNo': 'ridar135790',
         'MerchantTradeDate': '2023/12/11 10:23:24',
         'PaymentType': 'aio',
         'TotalAmount': 350,
