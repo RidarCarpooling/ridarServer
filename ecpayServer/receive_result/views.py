@@ -1,7 +1,7 @@
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from functions.firebase import read_transaction_from_firebase, write_transaction_to_firebase
-from functions.gen_check import genCheckMacValue
+from functions.gen_check import gen_check_mac_value
 
 @csrf_exempt
 def receive_payment_info(request):
@@ -17,7 +17,7 @@ def receive_payment_info(request):
         transaction_time = result.get('transactionTime', '')
         buyerId = result.get('user', '').id
         tripReference = result.get('tripReference') if result.get('tripReference') else ''
-        checkMac = genCheckMacValue(orderId=merchant_trade_no, transactionTime=transaction_time, price=trade_amt, buyerId=buyerId, tripId=tripReference)
+        checkMac = gen_check_mac_value(orderId=merchant_trade_no, transactionTime=transaction_time)
         
         print(checkMac)
         print(check_mac_value)
