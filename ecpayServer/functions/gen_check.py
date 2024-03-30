@@ -7,10 +7,10 @@ def genCheckMacValue(orderId, transactionTime, price, buyerId, tripId):
 
     queryParams = {
         'MerchantID': '2000132',
-        'MerchantTradeNo': orderId,
-        'MerchantTradeDate': transactionTime.strftime("%Y/%m/%d %H:%M:%S"),
+        'MerchantTradeNo': "ridar202403301627389",
+        'MerchantTradeDate': "2024/03/30 16:27:38",
         'PaymentType': 'aio',
-        'TotalAmount': price,
+        'TotalAmount': 350,
         'TradeDesc': '訂單測試',
         'ItemName': '旅程',
         'ReturnURL': 'https://ridar-server.vercel.app/return',
