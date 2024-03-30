@@ -22,7 +22,7 @@ def main(totalAmount, orderId, transactionTime, buyerId, tripReference):
         'ItemName': '旅程',
         'ReturnURL': 'https://ridar-server.vercel.app/return',
         'ChoosePayment': 'ALL',
-        'ClientBackURL': 'https://ridar-server.vercel.app/clientResult',
+        'ClientBackURL': f'https://ridar.com.tw/paymentResult/${orderId}?tripRef=${tripId}',
         # 'ItemURL': 'https://www.ecpay.com.tw/item_url.php',
         'Remark': '交易備註',
         # 'ChooseSubPayment': '',

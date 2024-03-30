@@ -28,7 +28,7 @@ def create_transaction_document(transaction_data, orderId):
     db = firestore.client()
     db.collection('transactions').document(orderId).set(transaction_data)
     
-def read_from_firebase(transaction_id):
+def read_transaction_from_firebase(transaction_id):
     """
     Retrieve a transaction document from Firestore based on the provided transaction ID.
     """
@@ -36,7 +36,7 @@ def read_from_firebase(transaction_id):
     transaction_doc = db.collection('transactions').document(transaction_id).get()
     return transaction_doc.to_dict()
 
-def write_to_firebase(transaction_id, transaction_data):
+def write_transaction_to_firebase(transaction_id, transaction_data):
     """
     Write a transaction document to Firestore.
     """
