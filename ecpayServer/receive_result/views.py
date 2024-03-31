@@ -20,13 +20,13 @@ def receive_payment_info(request):
         tripReference = result.get('tripReference') if result.get('tripReference') else ''
         checkMac = gen_check_mac_value(orderId=merchant_trade_no, transactionTime=transaction_time)
         checkMac2 = gen_check_mac_value(order_id=merchant_trade_no, transactionTime=payment_date)
-
         
         print(checkMac)
         print(check_mac_value)
+        print(checkMac2)
         # if (rtn_code == 1 and check_mac_value == checkMac):
         #     pass
-        if (rtn_code == 1)
+        # if (rtn_code == 1)
             # update transaction: status, trade_no, create docs, and ....
 
 
