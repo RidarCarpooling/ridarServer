@@ -71,7 +71,7 @@ def gen_check_mac_value(orderId, transactionTime):
         'MerchantTradeNo':  orderId,
         # datetime.now().strftime("NO%Y%m%d%H%M%S"),
         # 'StoreID': '',
-        'MerchantTradeDate': transactionTime,
+        'MerchantTradeDate': transactionTime.strftime("%Y/%m/%d %H:%M:%S"),
         'PaymentType': 'aio',
         'TotalAmount': 350,
         'TradeDesc': '訂單測試',

@@ -12,18 +12,14 @@ def receive_payment_info(request):
         trade_amt = request.POST.get('TradeAmt')
         payment_type = request.POST.get('PaymentType')
         check_mac_value = request.POST.get('CheckMacValue')
-        payment_date = request.POST.get('PaymentDate')
-        print(payment_date)
         result = read_transaction_from_firebase(merchant_trade_no)
         transaction_time = result.get('transactionTime', '')
         buyerId = result.get('user', '').id
         tripReference = result.get('tripReference') if result.get('tripReference') else ''
-        checkMac = gen_check_mac_value(orderId=merchant_trade_no, transactionTime=transaction_time.strftime("%Y/%m/%d %H:%M:%S"))
-        checkMac2 = gen_check_mac_value(orderId=merchant_trade_no, transactionTime=payment_date)
+        checkMac = gen_check_mac_value(orderId=merchant_trade_no, transactionTime=transaction_time)
         
         print(checkMac)
         print(check_mac_value)
-        print(checkMac2)
         # if (rtn_code == 1 and check_mac_value == checkMac):
         #     pass
         # if (rtn_code == 1)
