@@ -13,12 +13,12 @@ def receive_payment_info(request):
         payment_type = request.POST.get('PaymentType')
         check_mac_value = request.POST.get('CheckMacValue')
         payment_date = request.POST.get('PaymentDate')
-
+        print(payment_date)
         result = read_transaction_from_firebase(merchant_trade_no)
         transaction_time = result.get('transactionTime', '')
         buyerId = result.get('user', '').id
         tripReference = result.get('tripReference') if result.get('tripReference') else ''
-        checkMac = gen_check_mac_value(orderId=merchant_trade_no, transactionTime=transaction_time)
+        checkMac = gen_check_mac_value(orderId=merchant_trade_no, transactionTime=transaction_time.strftime("%Y/%m/%d %H:%M:%S"))
         checkMac2 = gen_check_mac_value(orderId=merchant_trade_no, transactionTime=payment_date)
         
         print(checkMac)
@@ -28,7 +28,8 @@ def receive_payment_info(request):
         #     pass
         # if (rtn_code == 1)
             # update transaction: status, trade_no, create docs, and ....
-
+        # else:
+            # update transaction: trade_no,
 
         return HttpResponse('1|OK')
     else:
