@@ -45,7 +45,7 @@ def receive_payment_info(request):
 
         
         if (rtn_code == 1):
-            update_transaction_data(orderId=merchant_trade_no, data=result, paymentStatus='paid', tradeNo=trade_no)
+            update_transaction_data(orderId=merchant_trade_no, transaction_data=result, paymentStatus='paid', tradeNo=trade_no)
             add_order_to_trip(tripReference, buyerRef, transaction_time, total_price, num_of_passengers, user_name, transaction_type)
             add_trip_to_history(buyerRef, finish_time, tripReference)
             create_notifications_doc(included_users, transaction_type)
@@ -105,7 +105,7 @@ def receive_payment_info(request):
                     )
 
         else: 
-            update_transaction_data(orderId=merchant_trade_no, data=result, paymentStatus='failed', tradeNo=trade_no)
+            update_transaction_data(orderId=merchant_trade_no, transaction_data=result, paymentStatus='failed', tradeNo=trade_no)
         
         return HttpResponse('1|OK')
     
