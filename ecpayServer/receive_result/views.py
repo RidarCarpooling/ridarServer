@@ -46,8 +46,9 @@ def receive_payment_info(request):
 
         print(rtn_code)
         print(rtn_msg)
+        print(type(rtn_code))
         
-        if (rtn_code == 1):
+        if (rtn_code == '1'):
             print('success')
             update_transaction_data(orderId=merchant_trade_no, transaction_data=result, paymentStatus='paid', tradeNo=trade_no)
             add_order_to_trip(tripReference, buyerRef, transaction_time, total_price, num_of_passengers, user_name, transaction_type, merchant_trade_no)
