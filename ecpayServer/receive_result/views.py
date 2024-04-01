@@ -18,7 +18,7 @@ def receive_payment_info(request):
         result = read_transaction_from_firebase(merchant_trade_no)
         transaction_time = result.get('transactionTime', '')
         buyerRef = result.get('user', '')
-        tripReference = result.get('tripReference') if result.get('tripReference') else ''
+        tripReference = result.get('tripReference', '')
         finish_time = result.get('finishTime', '')
         transaction_type = result.get('transactionType', '')
         num_of_passengers = result.get('numOfPassengers', 0)
@@ -35,7 +35,7 @@ def receive_payment_info(request):
             included_users = result.get('userPaid', '')
         
 
-        checkMac = gen_check_mac_value(merchant_trade_no, transaction_time, buyerRef.id, tripReference, final_price, lang)
+        checkMac = gen_check_mac_value(merchant_trade_no, transaction_time, buyerRef.id, tripReference.id, final_price, lang)
 
         print(check_mac_value)
         print(checkMac)
@@ -65,7 +65,7 @@ def receive_payment_info(request):
                         notification_title="Reminder",
                         notification_text=" The trip will depart in 2 hours, please pay attention to the time. (You can ignore this notification if you cancel your trip.)",
                         user_refs=[driverRef.path, buyerRef.path],
-                        scheduled_time=datetime.fromtimestamp(finish_time)-timedelta(hours=2),
+                        scheduled_time=datetime.fromtimestamp(int(finish_time))-timedelta(hours=2),
                         notification_sound="default",
                         sender=buyerRef
                     )
@@ -82,7 +82,7 @@ def receive_payment_info(request):
                         notification_title="貼心小提醒",
                         notification_text="您的旅程將於2小時後出發，請注意時間。(若您已取消旅程，可忽略此通知。)",
                         user_refs=[driverRef.path, buyerRef.path],
-                        scheduled_time=datetime.fromtimestamp(finish_time)-timedelta(hours=2),
+                        scheduled_time=datetime.fromtimestamp(int(finish_time))-timedelta(hours=2),
                         notification_sound="default",
                         sender=buyerRef
                     )
