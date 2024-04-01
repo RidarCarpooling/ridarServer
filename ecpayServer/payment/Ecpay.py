@@ -22,7 +22,7 @@ def main(totalAmount, orderId, transactionTime, buyerId, tripReference, lang):
         'TotalAmount': totalAmount,
         'TradeDesc': '訂單測試',
         'ItemName': '旅程',
-        'ReturnURL': 'https://server.ridar.com.tw//return',
+        'ReturnURL': 'https://server.ridar.com.tw/return',
         'ChoosePayment': 'ALL',
         'ClientBackURL': f'https://ridar.com.tw/paymentResult/{orderId}?tripRef={tripReference}',
         # 'ItemURL': 'https://www.ecpay.com.tw/item_url.php',
