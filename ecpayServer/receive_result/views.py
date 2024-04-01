@@ -12,6 +12,7 @@ def receive_payment_info(request):
         merchant_trade_no = request.POST.get('MerchantTradeNo')
         rtn_code = request.POST.get('RtnCode')
         trade_no = request.POST.get('TradeNo')
+        rtn_msg = request.POST.get("RtnMsg")
         check_mac_value = request.POST.get('CheckMacValue')
 
         result = read_transaction_from_firebase(merchant_trade_no)
@@ -43,10 +44,12 @@ def receive_payment_info(request):
         # if (rtn_code == 1)
         #    create docs, and ....
 
+        print(rtn_code)
+        print(rtn_msg)
         
         if (rtn_code == 1):
             update_transaction_data(orderId=merchant_trade_no, transaction_data=result, paymentStatus='paid', tradeNo=trade_no)
-            add_order_to_trip(tripReference, buyerRef, transaction_time, total_price, num_of_passengers, user_name, transaction_type)
+            add_order_to_trip(tripReference, buyerRef, transaction_time, total_price, num_of_passengers, user_name, transaction_type, merchant_trade_no)
             add_trip_to_history(buyerRef, finish_time, tripReference)
             create_notifications_doc(included_users, transaction_type)
             if email != '':

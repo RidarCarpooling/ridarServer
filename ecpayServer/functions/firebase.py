@@ -105,7 +105,7 @@ def add_trip_to_history(user_ref, finish_time, trip_ref):
         return False, f"An error occurred: {e}"
     
 
-def add_order_to_trip(trip_ref, passenger_ref, create_time, total_price, passengers, userName, transaction_type):
+def add_order_to_trip(trip_ref, passenger_ref, create_time, total_price, passengers, userName, transaction_type, transactionId):
     """
     Add an order to the orders list of a trip document in Firestore.
     Update other fields in the trips collection.
@@ -133,6 +133,7 @@ def add_order_to_trip(trip_ref, passenger_ref, create_time, total_price, passeng
 
             # Create the new order data
             new_order = {
+                'transactionId': transactionId,
                 'passengerRef': passenger_ref,
                 'createTime': create_time,
                 'totalPrice': total_price,
