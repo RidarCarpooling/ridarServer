@@ -17,7 +17,7 @@ def index(request):
     total_amount = result.get('finalPrice', 0)
     transaction_time = result.get('transactionTime', '')
     buyerId = result.get('user', '').id
-    tripReference = result.get('tripReference', '')
+    tripReference = result.get('tripRef', '')
     lang = result.get("ENG", '')
 
     return HttpResponse(main(total_amount, orderId, transaction_time, buyerId, tripReference.id, lang))

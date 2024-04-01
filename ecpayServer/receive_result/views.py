@@ -18,7 +18,7 @@ def receive_payment_info(request):
         result = read_transaction_from_firebase(merchant_trade_no)
         transaction_time = result.get('transactionTime', '')
         buyerRef = result.get('user', '')
-        tripReference = result.get('tripReference', '')
+        tripReference = result.get('tripRef', '')
         finish_time = result.get('finishTime', '')
         transaction_type = result.get('transactionType', '')
         num_of_passengers = result.get('numOfPassengers', 0)

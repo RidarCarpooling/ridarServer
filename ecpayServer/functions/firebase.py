@@ -169,7 +169,7 @@ def add_order_to_trip(trip_ref, passenger_ref, create_time, total_price, passeng
                 'included_users': included_users,
                 'passengers_num': updated_passengers_num
             })
-
+            print('Add order to trip successfully!')
             return True
         else:
             return False
