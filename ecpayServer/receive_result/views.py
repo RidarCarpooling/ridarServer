@@ -43,13 +43,8 @@ def receive_payment_info(request):
         #     pass
         # if (rtn_code == 1)
         #    create docs, and ....
-
-        print(rtn_code)
-        print(rtn_msg)
-        print(type(rtn_code))
         
-        if (rtn_code == '1'):
-            print('success')
+        if (rtn_code == '1' or rtn_code == 1):
             update_transaction_data(orderId=merchant_trade_no, transaction_data=result, paymentStatus='paid', tradeNo=trade_no)
             add_order_to_trip(tripReference, buyerRef, transaction_time, total_price, num_of_passengers, user_name, transaction_type, merchant_trade_no)
             add_trip_to_history(buyerRef, finish_time, tripReference)
@@ -87,7 +82,7 @@ def receive_payment_info(request):
                         notification_title="貼心小提醒",
                         notification_text="您的旅程將於2小時後出發，請注意時間。(若您已取消旅程，可忽略此通知。)",
                         user_refs=[driverRef, buyerRef],
-                        scheduled_time=datetime.fromtimestamp(finish_time)-timedelta(hours=2),
+                        scheduled_time=datetime.fromtimestamp(int(finish_time))-timedelta(hours=2),
                         notification_sound="default",
                         sender=buyerRef
                     )
