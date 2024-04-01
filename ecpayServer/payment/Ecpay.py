@@ -8,9 +8,10 @@ spec = importlib.util.spec_from_file_location(
 module = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(module)
 from datetime import datetime
+import os
 
 
-def main(totalAmount, orderId, transactionTime, buyerId, tripReference):
+def main(totalAmount, orderId, transactionTime, buyerId, tripReference, lang):
 
     order_params = {
         'MerchantTradeNo':  orderId,
@@ -18,12 +19,12 @@ def main(totalAmount, orderId, transactionTime, buyerId, tripReference):
         # 'StoreID': '',
         'MerchantTradeDate': transactionTime.strftime("%Y/%m/%d %H:%M:%S"),
         'PaymentType': 'aio',
-        'TotalAmount': 350,
+        'TotalAmount': totalAmount,
         'TradeDesc': '訂單測試',
         'ItemName': '旅程',
-        'ReturnURL': 'https://ridar-server.vercel.app/return',
+        'ReturnURL': 'https://server.ridar.com.tw//return',
         'ChoosePayment': 'ALL',
-        # 'ClientBackURL': f'https://ridar.com.tw/paymentResult/{orderId}?tripRef={tripReference}',
+        'ClientBackURL': f'https://ridar.com.tw/paymentResult/{orderId}?tripRef={tripReference}',
         # 'ItemURL': 'https://www.ecpay.com.tw/item_url.php',
         # 'Remark': '交易備註',
         # 'ChooseSubPayment': '',
@@ -33,12 +34,14 @@ def main(totalAmount, orderId, transactionTime, buyerId, tripReference):
         # 'IgnorePayment': 'ATM#CVS#BARCODE#BNPL',
         # 'PlatformID': '',
         # 'InvoiceMark': 'N',
-        # 'CustomField1': buyerId,
-        # 'CustomField2': tripReference,
+        'CustomField1': buyerId,
+        'CustomField2': tripReference,
         # 'CustomField3': '',
         # 'CustomField4': '',
         'EncryptType': 1,
     }
+    if lang == 'ENG':
+        order_params['Language'] = 'ENG'
     # extend_params_1 = {
     #     'ExpireDate': 7,
         # 'PaymentInfoURL': 'https://www.ecpay.com.tw/payment_info_url.php',
@@ -92,9 +95,9 @@ def main(totalAmount, orderId, transactionTime, buyerId, tripReference):
 
     # 建立實體
     ecpay_payment_sdk = module.ECPayPaymentSdk(
-        MerchantID='3002607',
-        HashKey='pwFHCqoQZGmho4w6',
-        HashIV='EkRm7iFT261dpevs'
+        MerchantID=os.environ.get("MERCHANT_ID"),
+        HashKey=os.environ.get('HASH_KEY'),
+        HashIV=os.environ.get("HASH_IV")
     )
 
     # 合併延伸參數

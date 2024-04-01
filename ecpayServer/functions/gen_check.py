@@ -49,9 +49,10 @@
 # print(checkMacValue)
 
 import importlib.util
+import os
 
 # Create module specification
-def gen_check_mac_value(orderId, transactionTime):
+def gen_check_mac_value(orderId, transactionTime, buyerId, tripReference, totalAmount, lang):
     spec = importlib.util.spec_from_file_location(
         "ecpay_payment_sdk",
         "ecpay_payment_sdk.py"
@@ -64,36 +65,36 @@ def gen_check_mac_value(orderId, transactionTime):
     spec.loader.exec_module(module)
 
     # Create an instance of the ECPayPaymentSdk class
-    ecpay_sdk = module.ECPayPaymentSdk(MerchantID='3002607', HashKey='pwFHCqoQZGmho4w6', HashIV='EkRm7iFT261dpevs')
+    ecpay_sdk = module.ECPayPaymentSdk(MerchantID=os.environ.get("MERCHANT_ID"), HashKey=os.environ.get("HASH_KEY"), HashIV=os.environ.get("HASH_IV"))
 
     # Prepare your parameters
     params = {
         'MerchantTradeNo':  orderId,
-        # datetime.now().strftime("NO%Y%m%d%H%M%S"),
-        # 'StoreID': '',
         'MerchantTradeDate': transactionTime.strftime("%Y/%m/%d %H:%M:%S"),
         'PaymentType': 'aio',
-        'TotalAmount': 350,
+        'TotalAmount': totalAmount,
         'TradeDesc': '訂單測試',
         'ItemName': '旅程',
-        'ReturnURL': 'https://ridar-server.vercel.app/return',
+        'ReturnURL': 'https://server.ridar.com.tw/return',
         'ChoosePayment': 'ALL',
-        # 'ClientBackURL': f'https://ridar.com.tw/paymentResult/{orderId}?tripRef={tripReference}',
+        'ClientBackURL': f'https://ridar.com.tw/paymentResult/{orderId}?tripRef={tripReference}',
         # 'ItemURL': 'https://www.ecpay.com.tw/item_url.php',
         # 'Remark': '交易備註',
         # 'ChooseSubPayment': '',
         # 'OrderResultURL': 'https://ridar-server.vercel.app/clientResult',
         # 'NeedExtraPaidInfo': 'Y',
         # 'DeviceSource': '',
-        # 'IgnorePayment': 'ATM#CVS#BARCODE#BNPL',
+        'IgnorePayment': 'ATM#CVS#BARCODE#BNPL',
         # 'PlatformID': '',
         # 'InvoiceMark': 'N',
-        # 'CustomField1': buyerId,
-        # 'CustomField2': tripReference,
+        'CustomField1': buyerId,
+        'CustomField2': tripReference,
         # 'CustomField3': '',
         # 'CustomField4': '',
         'EncryptType': 1,
     }
+    if lang == 'ENG':
+        params['Language'] = 'ENG'
 
     # Call the generate_check_value method
     check_mac_value = ecpay_sdk.generate_check_value(params)
