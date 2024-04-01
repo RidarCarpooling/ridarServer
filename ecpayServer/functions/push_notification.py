@@ -38,3 +38,8 @@ def trigger_push_notification(notification_title, notification_text, user_refs, 
 
     except Exception as e:
         print(f"Error sending push notification: {e}")
+
+
+from firebase_admin import firestore
+
+# Example function call with test data

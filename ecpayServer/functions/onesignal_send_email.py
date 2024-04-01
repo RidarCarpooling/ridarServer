@@ -29,7 +29,7 @@ def send_notification(amount, first_name, email):
 
         try: 
             api_response = api_instance.create_notification(notification)
-            print("Notification sent successfully!")
+            print("Email sent successfully!")
         except onesignal.ApiException as e:
             print('Exception when calling DefaultApi => create_notification: %s\n' % e)
 
