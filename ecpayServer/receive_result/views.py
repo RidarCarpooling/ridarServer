@@ -32,6 +32,7 @@ def receive_payment_info(request):
         email = result.get('email', '')
         driverRef = result.get('userPaid', '')
 
+
         if transaction_type == 'success':
             included_users = [buyerRef, driverRef]
         else:
@@ -57,11 +58,13 @@ def receive_payment_info(request):
                             notification_sound="default",
                             sender=buyerRef
                         )
+                        print(type(start_time))
+                        print(start_time - timedelta(hours=2))
                         trigger_push_notification(
                             notification_title="Reminder",
                             notification_text="The trip will depart in 2 hours, please pay attention to the time. (You can ignore this notification if you cancel your trip.)",
                             user_refs=[driverRef.path, buyerRef.path],
-                            scheduled_time=datetime.fromtimestamp(start_time.seconds)-timedelta(hours=2),
+                            scheduled_time=datetime.fromtimestamp(start_time)-timedelta(hours=2),
                             notification_sound="default",
                             sender=buyerRef
                         )
@@ -78,7 +81,7 @@ def receive_payment_info(request):
                             notification_title="貼心小提醒",
                             notification_text="您的旅程將於2小時後出發，請注意時間。(若您已取消旅程，可忽略此通知。)",
                             user_refs=[driverRef.path, buyerRef.path],
-                            scheduled_time=datetime.fromtimestamp(start_time.seconds)-timedelta(hours=2),
+                            scheduled_time=datetime.fromtimestamp(start_time)-timedelta(hours=2),
                             notification_sound="default",
                             sender=buyerRef
                         )
