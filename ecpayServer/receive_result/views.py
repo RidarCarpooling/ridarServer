@@ -35,11 +35,8 @@ def receive_payment_info(request):
         else:
             included_users = result.get('userPaid', '')
         
-
         checkMac = gen_check_mac_value(all_params)
 
-        print(check_mac_value)
-        print(checkMac)
         # if (rtn_code == 1 and check_mac_value == checkMac):
         #     pass
         # if (rtn_code == 1)

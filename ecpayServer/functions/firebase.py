@@ -69,12 +69,15 @@ def add_trip_to_history(user_ref, finish_time, trip_ref):
     Add a trip to the trip_history list of a user document in Firestore.
     """
     # Get the Firestore client
-
+    
     try:
+        print(user_ref)
         # Get the user document
         user_doc_ref = db.document(user_ref)
         user_doc = user_doc_ref.get()
 
+        print(user_doc_ref)
+        print(user_doc)
         # Check if the user document exists
         if user_doc.exists:
             # Get the current trip history list
@@ -98,6 +101,7 @@ def add_trip_to_history(user_ref, finish_time, trip_ref):
             # Update the user document with the new trip history list
             user_doc_ref.update({'trip_history': trip_history})
 
+            print('Add trip to history successfully.')
             return True
         else:
             return False
@@ -114,8 +118,11 @@ def add_order_to_trip(trip_ref, passenger_ref, create_time, total_price, passeng
 
     try:
         # Get the trip document
-        trip_doc_ref = db.document(trip_ref)
+        print(trip_ref)
+        trip_doc_ref = db.document(trip_ref.path)
         trip_doc = trip_doc_ref.get()
+        print(trip_doc_ref)
+        print(trip_doc)
 
         # Check if the trip document exists
         if trip_doc.exists:
