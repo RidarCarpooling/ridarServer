@@ -15,13 +15,14 @@ def receive_payment_info(request):
         rtn_code = request.POST.get('RtnCode')
         trade_no = request.POST.get('TradeNo')
         check_mac_value = request.POST.get('CheckMacValue')
+        credit_refund_id = request.POST.get('CreditRefundId')
 
         result = read_transaction_from_firebase(merchant_trade_no)
         transaction_time = result.get('transactionTime', '')
         buyerRef = result.get('user', '')
         tripReference = result.get('tripRef', '')
         finish_time = result.get('finishTime', '')
-        start_time = result.get('startTime', '')
+        start_time = result.get('startTime', 0)
         transaction_type = result.get('transactionType', '')
         num_of_passengers = result.get('numOfPassengers', 0)
         user_name = result.get('userName', '')
@@ -38,13 +39,9 @@ def receive_payment_info(request):
         
         checkMac = gen_check_mac_value(all_params)
 
-        # if (rtn_code == 1 and check_mac_value == checkMac):
-        #     pass
-        # if (rtn_code == 1)
-        #    create docs, and ....
         if (check_mac_value == checkMac):
             if ((rtn_code == '1' or rtn_code == 1)):
-                update_transaction_data(orderId=merchant_trade_no, transaction_data=result, paymentStatus='paid', tradeNo=trade_no)
+                update_transaction_data(orderId=merchant_trade_no, transaction_data=result, paymentStatus='paid', tradeNo=trade_no, credit_refund_id=credit_refund_id)
                 add_order_to_trip(tripReference, buyerRef, transaction_time, total_price, num_of_passengers, user_name, transaction_type, merchant_trade_no)
                 add_trip_to_history(buyerRef, finish_time, tripReference)
                 create_notifications_doc(included_users, transaction_type)
@@ -64,7 +61,7 @@ def receive_payment_info(request):
                             notification_title="Reminder",
                             notification_text="The trip will depart in 2 hours, please pay attention to the time. (You can ignore this notification if you cancel your trip.)",
                             user_refs=[driverRef.path, buyerRef.path],
-                            scheduled_time=datetime.fromtimestamp(start_time)-timedelta(hours=2),
+                            scheduled_time=datetime.fromtimestamp(int(start_time))-timedelta(hours=2),
                             notification_sound="default",
                             sender=buyerRef
                         )
@@ -81,7 +78,7 @@ def receive_payment_info(request):
                             notification_title="貼心小提醒",
                             notification_text="您的旅程將於2小時後出發，請注意時間。(若您已取消旅程，可忽略此通知。)",
                             user_refs=[driverRef.path, buyerRef.path],
-                            scheduled_time=datetime.fromtimestamp(start_time)-timedelta(hours=2),
+                            scheduled_time=datetime.fromtimestamp(int(start_time))-timedelta(hours=2),
                             notification_sound="default",
                             sender=buyerRef
                         )
@@ -104,7 +101,7 @@ def receive_payment_info(request):
                         )
 
             else: 
-                update_transaction_data(orderId=merchant_trade_no, transaction_data=result, paymentStatus='failed', tradeNo=trade_no)
+                update_transaction_data(orderId=merchant_trade_no, transaction_data=result, paymentStatus='failed', tradeNo=trade_no, credit_refund_id=None)
             return HttpResponse('1|OK')
         else:
             pass

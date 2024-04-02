@@ -29,7 +29,7 @@ def main(totalAmount, orderId, transactionTime, buyerId, tripReference, lang):
         # 'Remark': '交易備註',
         # 'ChooseSubPayment': '',
         # 'OrderResultURL': 'https://ridar-server.vercel.app/clientResult',
-        # 'NeedExtraPaidInfo': 'Y',
+        'NeedExtraPaidInfo': 'Y',
         # 'DeviceSource': '',
         'IgnorePayment': 'ATM#CVS#BARCODE#BNPL',
         # 'PlatformID': '',
