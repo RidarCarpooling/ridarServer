@@ -62,7 +62,7 @@ def receive_payment_info(request):
                             notification_title="Reminder",
                             notification_text="The trip will depart in 2 hours, please pay attention to the time. (You can ignore this notification if you cancel your trip.)",
                             user_refs=[driverRef.path, buyerRef.path],
-                            scheduled_time=start_time.time()-timedelta(hours=2),
+                            scheduled_time=start_time-timedelta(hours=2),
                             notification_sound="default",
                             sender=buyerRef
                         )
@@ -79,7 +79,7 @@ def receive_payment_info(request):
                             notification_title="貼心小提醒",
                             notification_text="您的旅程將於2小時後出發，請注意時間。(若您已取消旅程，可忽略此通知。)",
                             user_refs=[driverRef.path, buyerRef.path],
-                            scheduled_time=start_time.time()-timedelta(hours=2),
+                            scheduled_time=start_time-timedelta(hours=2),
                             notification_sound="default",
                             sender=buyerRef
                         )

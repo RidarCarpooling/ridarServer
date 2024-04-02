@@ -2,20 +2,20 @@ from firebase_admin import firestore, initialize_app, credentials
 import os
 from datetime import datetime
 
-# def initialize_firebase():
-#     """
-#     Initialize Firebase Admin SDK using a service account key file.
-#     """
-#     # Check if the service account key file path is set in the environment variable
-#     service_account_key_path = 'ridar-e1rlvk-firebase-adminsdk-31um4-04d2182145.json'
+def initialize_firebase():
+    """
+    Initialize Firebase Admin SDK using a service account key file.
+    """
+    # Check if the service account key file path is set in the environment variable
+    service_account_key_path = 'ridar-e1rlvk-firebase-adminsdk-31um4-04d2182145.json'
     
-#     if not service_account_key_path:
-#         print("Error: Service account key file path is not set in the environment variable.")
-#         return
+    if not service_account_key_path:
+        print("Error: Service account key file path is not set in the environment variable.")
+        return
     
-#     # Initialize Firebase with the service account key file
-#     cred = credentials.Certificate(service_account_key_path)
-#     initialize_app(cred)
+    # Initialize Firebase with the service account key file
+    cred = credentials.Certificate(service_account_key_path)
+    initialize_app(cred)
 
 # Call the initialize_firebase function to initialize Firebase
 # initialize_firebase()
