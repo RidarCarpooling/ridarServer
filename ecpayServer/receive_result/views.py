@@ -21,6 +21,7 @@ def receive_payment_info(request):
         buyerRef = result.get('user', '')
         tripReference = result.get('tripRef', '')
         finish_time = result.get('finishTime', '')
+        start_time = result.get('startTime', '')
         transaction_type = result.get('transactionType', '')
         num_of_passengers = result.get('numOfPassengers', 0)
         user_name = result.get('userName', '')
@@ -31,9 +32,9 @@ def receive_payment_info(request):
         driverRef = result.get('userPaid', '')
 
         if transaction_type == 'success':
-            included_users = result.get('includedUsers', [])
+            included_users = [buyerRef, driverRef]
         else:
-            included_users = result.get('userPaid', '')
+            included_users = [driverRef]
         
         checkMac = gen_check_mac_value(all_params)
 
@@ -45,7 +46,6 @@ def receive_payment_info(request):
             if ((rtn_code == '1' or rtn_code == 1)):
                 update_transaction_data(orderId=merchant_trade_no, transaction_data=result, paymentStatus='paid', tradeNo=trade_no)
                 add_order_to_trip(tripReference, buyerRef, transaction_time, total_price, num_of_passengers, user_name, transaction_type, merchant_trade_no)
-                print(finish_time)
                 add_trip_to_history(buyerRef, finish_time, tripReference)
                 create_notifications_doc(included_users, transaction_type)
                 if email != '':
@@ -62,9 +62,9 @@ def receive_payment_info(request):
                         )
                         trigger_push_notification(
                             notification_title="Reminder",
-                            notification_text=" The trip will depart in 2 hours, please pay attention to the time. (You can ignore this notification if you cancel your trip.)",
+                            notification_text="The trip will depart in 2 hours, please pay attention to the time. (You can ignore this notification if you cancel your trip.)",
                             user_refs=[driverRef.path, buyerRef.path],
-                            scheduled_time=datetime.fromtimestamp(int(finish_time))-timedelta(hours=2),
+                            scheduled_time=datetime.fromtimestamp(start_time)-timedelta(hours=2),
                             notification_sound="default",
                             sender=buyerRef
                         )
@@ -81,7 +81,7 @@ def receive_payment_info(request):
                             notification_title="貼心小提醒",
                             notification_text="您的旅程將於2小時後出發，請注意時間。(若您已取消旅程，可忽略此通知。)",
                             user_refs=[driverRef.path, buyerRef.path],
-                            scheduled_time=datetime.fromtimestamp(int(finish_time))-timedelta(hours=2),
+                            scheduled_time=datetime.fromtimestamp(start_time)-timedelta(hours=2),
                             notification_sound="default",
                             sender=buyerRef
                         )

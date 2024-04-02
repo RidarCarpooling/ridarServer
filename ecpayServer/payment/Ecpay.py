@@ -112,9 +112,7 @@ def main(totalAmount, orderId, transactionTime, buyerId, tripReference, lang):
     try:
         # 產生綠界訂單所需參數
         final_order_params = ecpay_payment_sdk.create_order(order_params)
-        print(final_order_params)
         check = ecpay_payment_sdk.generate_check_value(final_order_params)
-        print(check)
         # 產生 html 的 form 格式
         action_url = 'https://payment-stage.ecpay.com.tw/Cashier/AioCheckOut/V5'  # 測試環境
         # action_url = 'https://payment.ecpay.com.tw/Cashier/AioCheckOut/V5' # 正式環境
