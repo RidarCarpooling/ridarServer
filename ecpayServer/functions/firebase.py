@@ -245,3 +245,32 @@ def create_notifications_doc(included_users, transaction_type):
         return True
     except Exception as e:
         return False, f"An error occurred: {e}"
+
+
+def update_account_balance(user_ref, moneyReturnToWallet):
+    """
+    Add a trip to the trip_history list of a user document in Firestore.
+    """
+    # Get the Firestore client
+    
+    try:
+        # Get the user document
+        user_doc_ref = db.document(user_ref.path)
+        user_doc = user_doc_ref.get()
+
+        # Check if the user document exists
+        if user_doc.exists:
+            # Get the current trip history list
+            account_balance = user_doc.get('account_balance', 0)
+
+            account_balance += moneyReturnToWallet
+            user_doc_ref.update({'account_balance': account_balance})
+
+            
+
+            print('Refund to wallet successfully')
+            return True
+        else:
+            return False
+    except Exception as e:
+        return False, f"An error occurred: {e}"
