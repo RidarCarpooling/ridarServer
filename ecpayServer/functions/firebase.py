@@ -82,12 +82,16 @@ def add_trip_to_history(user_ref, finish_time, trip_ref, moneyViaWallet):
         if user_doc.exists:
             # Get the current trip history list
             trip_history = user_doc.to_dict().get('trip_history', [])
-            account_balance = user_doc.get('account_balance', )
+            account_balance = user_doc.get('account_balance', 0)
+
+            if moneyViaWallet > 0 and account_balance > 0:
+                account_balance = max(0, account_balance - moneyViaWallet)
 
             for trip in trip_history:
                 if trip['tripRef'] == trip_ref:
                     # Set the status to 'success' if the trip already exists
                     trip['status'] = 'success'
+                    user_doc_ref.update({'trip_history': trip_history, 'account_balance': account_balance})
                     return True
                 
             # Calculate the reverse index
@@ -105,12 +109,9 @@ def add_trip_to_history(user_ref, finish_time, trip_ref, moneyViaWallet):
             # Append the new trip to the trip history list
             trip_history.append(new_trip)
 
-            if moneyViaWallet > 0 and account_balance > 0:
-                account_balance = max(0, account_balance - moneyViaWallet)
-
             # Update the user document with the new trip history list
             user_doc_ref.update({'trip_history': trip_history, 'account_balance': account_balance})
-            
+
             
 
             print('Add trip to history successfully.')
@@ -163,6 +164,7 @@ def add_order_to_trip(trip_ref, passenger_ref, create_time, total_price, passeng
                     existing_order['passengers'] += passengers
                 else:
                     existing_order['passengers'] = passengers
+                    existing_order['status'] == status
                 # Add transactionId to the existing order
                 existing_order['transactionId'].append(transactionId)
             else:
@@ -196,7 +198,7 @@ def add_order_to_trip(trip_ref, passenger_ref, create_time, total_price, passeng
 
             # Update the trip document with the new orders list and other fields
             trip_doc_ref.update({
-                'orders': orders,
+                'orders': orders if existing_order_index is not None else existing_order,
                 'current_available_seats': updated_seats,
                 'passenger_userIds': passenger_user_ids,
                 'included_users': included_users,
