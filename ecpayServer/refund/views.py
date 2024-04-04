@@ -19,7 +19,6 @@ def refund(request):
 
     try:
         tradeDetails = read_transaction_from_firebase(orderId)
-        print(tradeDetails)
         creditRefundId = tradeDetails.get('creditRefundId', '')
         creditAmount = tradeDetails.get('finalPrice', '')
         tradeNo = tradeDetails.get('tradeNo', '')
