@@ -14,7 +14,8 @@ def refund(request):
         time.sleep((datetime.strptime('20:30', '%H:%M') - current_time.time()).total_seconds())
 
     orderId = request.POST.get('orderId')
-    print(orderId, 'Call the api successfully')
+    refundType = request.POST.get('refundType')
+    print('Call the api successfully', orderId, refundType)
 
     tradeDetails = read_transaction_from_firebase(orderId)
     creditRefundId = tradeDetails.get('creditRefundId', '')
@@ -32,7 +33,7 @@ def refund(request):
             status = ''
 
         # full refund
-        if startTime - current_time > timedelta(hours=72): 
+        if refundType == 'full': 
             if status == '已授權':
                 perform_credit_do_action(orderId, tradeNo, creditAmount, action='N')
             elif status == '要關帳':
@@ -47,7 +48,7 @@ def refund(request):
             write_transaction_to_firebase(orderId, tradeDetails)
         
         # partial refund
-        elif startTime > current_time:
+        elif refundType == 'partial':
             refund_value = calculate_refund_value(startTime, creditAmount, moneyViaWallet)
             if refund_value:
                 if status == '已授權':
