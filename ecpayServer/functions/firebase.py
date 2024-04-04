@@ -35,7 +35,6 @@ def read_transaction_from_firebase(transaction_id):
     """
 
     transaction_doc = db.collection('transactions').document(transaction_id).get()
-    print(transaction_doc)
     return transaction_doc.to_dict()
 
 def write_transaction_to_firebase(transaction_id, transaction_data):
