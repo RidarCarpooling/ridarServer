@@ -5,7 +5,7 @@ from functions.gen_check import gen_check_mac_value
 from functions.onesignal_send_email import send_notification
 from functions.push_notification import trigger_push_notification
 from datetime import timedelta
-from order_search import query_order
+from .order_search import query_order
 
 @csrf_exempt
 def receive_payment_info(request):
