@@ -66,7 +66,7 @@ def update_transaction_data(orderId, transaction_data, paymentStatus, tradeNo, c
         print("Transaction data not found for orderId:", orderId)
 
 
-def add_trip_to_history(user_ref, finish_time, trip_ref):
+def add_trip_to_history(user_ref, finish_time, trip_ref, moneyViaWallet):
     """
     Add a trip to the trip_history list of a user document in Firestore.
     """
@@ -82,7 +82,14 @@ def add_trip_to_history(user_ref, finish_time, trip_ref):
         if user_doc.exists:
             # Get the current trip history list
             trip_history = user_doc.to_dict().get('trip_history', [])
+            account_balance = user_doc.get('account_balance', )
 
+            for trip in trip_history:
+                if trip['tripRef'] == trip_ref:
+                    # Set the status to 'success' if the trip already exists
+                    trip['status'] = 'success'
+                    return True
+                
             # Calculate the reverse index
             reverse_index = -(len(trip_history) + 1)
 
@@ -98,8 +105,13 @@ def add_trip_to_history(user_ref, finish_time, trip_ref):
             # Append the new trip to the trip history list
             trip_history.append(new_trip)
 
+            if moneyViaWallet > 0 and account_balance > 0:
+                account_balance = max(0, account_balance - moneyViaWallet)
+
             # Update the user document with the new trip history list
-            user_doc_ref.update({'trip_history': trip_history})
+            user_doc_ref.update({'trip_history': trip_history, 'account_balance': account_balance})
+            
+            
 
             print('Add trip to history successfully.')
             return True
@@ -135,22 +147,39 @@ def add_order_to_trip(trip_ref, passenger_ref, create_time, total_price, passeng
             else:
                 status = 'matching'
 
-            # Create the new order data
-            new_order = {
-                'transactionId': transactionId,
-                'passengerRef': passenger_ref,
-                'createTime': create_time,
-                'totalPrice': total_price,
-                'passengers': passengers,
-                'status': status,
-                'alreadyComment': False,
-                'userName': userName,
-                'isCommented': False,
-                'showCommentWhileLoading': True
-            }
 
-            # Append the new order to the orders list
-            orders.append(new_order)
+            # Create the new order data
+            existing_order_index = None
+            for i, order in enumerate(orders):
+                if order['passengerRef'] == passenger_ref:
+                    existing_order_index = i
+                    break
+
+            # If an existing order is found
+            if existing_order_index is not None:
+                existing_order = orders[existing_order_index]
+                # Update passengers count based on order status
+                if existing_order['status'] in ['matching', 'success']:
+                    existing_order['passengers'] += passengers
+                else:
+                    existing_order['passengers'] = passengers
+                # Add transactionId to the existing order
+                existing_order['transactionId'].append(transactionId)
+            else:
+                # Create a new order
+                new_order = {
+                    'transactionId': [transactionId],
+                    'passengerRef': passenger_ref,
+                    'createTime': create_time,
+                    'totalPrice': total_price,
+                    'passengers': passengers,
+                    'status': status,
+                    'alreadyComment': False,
+                    'userName': userName,
+                    'isCommented': False,
+                    'showCommentWhileLoading': True
+                }
+                orders.append(new_order)
 
             # Update other fields in the trips collection
             current_available_seats = trip_data.get('current_available_seats', 0)

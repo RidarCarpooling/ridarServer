@@ -4,7 +4,8 @@ from functions.firebase import read_transaction_from_firebase, add_order_to_trip
 from functions.gen_check import gen_check_mac_value
 from functions.onesignal_send_email import send_notification
 from functions.push_notification import trigger_push_notification
-from datetime import datetime, timezone, timedelta
+from datetime import timedelta
+from order_search import query_order
 
 @csrf_exempt
 def receive_payment_info(request):
@@ -29,6 +30,7 @@ def receive_payment_info(request):
         lang = result.get("ENG", '')
         total_price = result.get('totalPrice', 0)
         final_price = result.get('finalPrice', 0)
+        moneyViaWallet = result.get('moneyViaWallet', '')
         email = result.get('email', '')
         driverRef = result.get('userPaid', '')
 
@@ -41,10 +43,11 @@ def receive_payment_info(request):
         checkMac = gen_check_mac_value(all_params)
 
         if (check_mac_value == checkMac):
-            if ((rtn_code == '1' or rtn_code == 1)):
+            result = query_order(merchant_trade_no)
+            if ((rtn_code == '1' or rtn_code == 1) and result['TradeStatus'] == '1'):
                 update_transaction_data(orderId=merchant_trade_no, transaction_data=result, paymentStatus='paid', tradeNo=trade_no, credit_refund_id=credit_refund_id)
                 add_order_to_trip(tripReference, buyerRef, transaction_time, total_price, num_of_passengers, user_name, transaction_type, merchant_trade_no)
-                add_trip_to_history(buyerRef, finish_time, tripReference)
+                add_trip_to_history(buyerRef, finish_time, tripReference, moneyViaWallet)
                 create_notifications_doc(included_users, transaction_type)
                 if email != '':
                     send_notification(final_price, user_name, email)

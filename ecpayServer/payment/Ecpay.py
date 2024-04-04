@@ -31,7 +31,7 @@ def main(totalAmount, orderId, transactionTime, buyerId, tripReference, lang):
         # 'OrderResultURL': 'https://ridar-server.vercel.app/clientResult',
         'NeedExtraPaidInfo': 'Y',
         # 'DeviceSource': '',
-        'IgnorePayment': 'ATM#CVS#BARCODE#BNPL',
+        'IgnorePayment': 'WebATM#ATM#CVS#BARCODE#BNPL',
         # 'PlatformID': '',
         # 'InvoiceMark': 'N',
         'CustomField1': buyerId,
