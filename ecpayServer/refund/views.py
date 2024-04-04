@@ -17,13 +17,16 @@ def refund(request):
     refundType = request.POST.get('refundType')
     print('Call the api successfully', orderId, refundType)
 
-    tradeDetails = read_transaction_from_firebase(orderId)
-    print(tradeDetails)
-    creditRefundId = tradeDetails.get('creditRefundId', '')
-    creditAmount = tradeDetails.get('finalPrice', '')
-    tradeNo = tradeDetails.get('tradeNo', '')
-    startTime = tradeDetails.get('startTime', '')
-    moneyViaWallet = tradeDetails.get('moneyViaWallet', '')
+    try:
+        tradeDetails = read_transaction_from_firebase(orderId)
+        print(tradeDetails)
+        creditRefundId = tradeDetails.get('creditRefundId', '')
+        creditAmount = tradeDetails.get('finalPrice', '')
+        tradeNo = tradeDetails.get('tradeNo', '')
+        startTime = tradeDetails.get('startTime', '')
+        moneyViaWallet = tradeDetails.get('moneyViaWallet', '')
+    except Exception as e:
+        print('Transaction data not found', e)
 
     if creditAmount > 0:
         try:
