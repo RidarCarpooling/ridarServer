@@ -8,6 +8,11 @@ from .credit_do_action import perform_credit_do_action
 
 @csrf_exempt
 def refund(request):
+
+    authorization_token = request.headers.get('Authorization')
+    if not is_valid_token(authorization_token):
+        return HttpResponse('Unauthorized', status=401)
+    
     current_time = datetime.now()
     if current_time.time() >= datetime.strptime('20:15', '%H:%M').time() and \
             current_time.time() <= datetime.strptime('20:30', '%H:%M').time():
@@ -94,3 +99,9 @@ def calculate_refund_value(startTime, credit_amount, money_via_wallet):
             refund = total * 0.5 + money_via_wallet
             return refund
     return False
+
+import os
+
+def is_valid_token(token):
+    valid_tokens = [os.environ.get('API_AUTH_TOKEN')]
+    return token in valid_tokens
