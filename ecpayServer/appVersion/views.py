@@ -1,33 +1,27 @@
 from django.http import JsonResponse
 
 def checkAppVersion(request):
-    # Latest versions for each platform
-    latest_versions = {
-        'ios': '1.0',
-        'android': '1.0',
-        'web': '1.0'
-    }
+    if request.method == 'POST':
+        app_version = request.POST.get('app_version')
+        platform = request.POST.get('platform')
 
-    # Get app version and platform from the request
-    app_version = request.POST.get('app_version')
-    platform = request.POST.get('platform')
+        # Perform the app version check logic here
+        # For simplicity, I'm assuming you have stored version numbers in a dictionary
+        app_versions = {
+            'ios': '1.0',
+            'android': '1.0',
+            'web': '1.0'
+        }
 
-    # Check if the platform and app version are provided
-    if app_version and platform:
-        # Check if the platform exists in the latest_versions dictionary
-        if platform in latest_versions:
-            latest_version = latest_versions[platform]
-            
-            # Compare the client version with the latest version
-            if app_version < latest_version:
-                # If the client version is outdated, return True
-                return JsonResponse({'upgrade_required': True})
-            else:
-                # If the client version is up-to-date, return False
-                return JsonResponse({'upgrade_required': False})
+        # Check if the requested platform and version match the stored version
+        if platform in app_versions and app_versions[platform] == app_version:
+            result = True  # Version matches
         else:
-            # If the platform is not supported, return an error
-            return JsonResponse({'error': f'Unsupported platform: {platform}'}, status=400)
+            result = False  # Version does not match
+
+        # Return the result as JSON response
+        return JsonResponse({'result': result})
+
     else:
-        # If app_version or platform is missing, return an error
-        return JsonResponse({'error': 'App version and platform are required'}, status=400)
+        # If the request method is not POST, return an error response
+        return JsonResponse({'error': 'Invalid request method'}, status=400)
