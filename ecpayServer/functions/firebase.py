@@ -240,7 +240,7 @@ def create_notifications_doc(included_users, transaction_type):
             }
 
         # Add the notification document to Firestore
-        db.collection('notifications').add(notification_data)
+        db.collection('notification').add(notification_data)
 
         return True
     except Exception as e:
