@@ -1,5 +1,7 @@
 from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 
+@csrf_exempt
 def checkAppVersion(request):
     if request.method == 'POST':
         app_version = request.POST.get('app_version')
