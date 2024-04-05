@@ -8,6 +8,6 @@ urlpatterns = [
     path('return', include("receive_result.urls")),
     path('refund', include('refund.urls')),
     path('favicon.ico',RedirectView.as_view(url='favicon.ico')),
-    path('checkVersion', include('appVersion.urls')'),
+    path('checkVersion', include('appVersion.urls')),
     path('admin/', admin.site.urls)
 ]
