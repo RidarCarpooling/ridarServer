@@ -33,6 +33,7 @@ def refund(request):
             startTime = tradeDetails.get('startTime', '')
             moneyViaWallet = tradeDetails.get('moneyViaWallet', 0)
             totalCost = tradeDetails.get('passengerCost', 0)
+            driverEarned = tradeDetails.get('driverEarned', 0)
             user_ref = tradeDetails.get('user', '')
         except Exception as e:
             print('Transaction data not found', e)
@@ -78,12 +79,12 @@ def refund(request):
                     elif status in ['要關帳', '已關帳']:
                         perform_credit_do_action(orderId, tradeNo, refund_to_credit, action='R')
                     tradeDetails['paymentStatus'] = 'cancelled'
-                    tradeDetails['passengerCost'] = (totalCost) * 0.5
-                    tradeDetails['driverEarned'] = (totalCost) * 0.35
+                    tradeDetails['passengerCost'] = totalCost * 0.5
+                    tradeDetails['driverEarned'] = driverEarned * 0.35
                     write_transaction_to_firebase(orderId, tradeDetails)
                 # cannot refund
                 else:
-                    tradeDetails['driverEarned'] = (totalCost) * 0.7
+                    tradeDetails['driverEarned'] = driverEarned * 0.7
                     write_transaction_to_firebase(orderId, tradeDetails)
         
     if moneyReturn > 0:
