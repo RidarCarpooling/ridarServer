@@ -10,9 +10,9 @@ def checkAppVersion(request):
         # Perform the app version check logic here
         # For simplicity, I'm assuming you have stored version numbers in a dictionary
         app_versions = {
-            'ios': '1.0',
+            'ios': '1.1',
             'android': '1.0',
-            'web': '1.0'
+            'web': '1.1'
         }
 
         # Check if the requested platform and version match the stored version
