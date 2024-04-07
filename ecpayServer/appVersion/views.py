@@ -1,11 +1,9 @@
 from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
 
-@csrf_exempt
 def checkAppVersion(request):
-    if request.method == 'POST':
-        app_version = request.POST.get('app_version')
-        platform = request.POST.get('platform')
+    if request.method == 'GET':
+        app_version = request.GET.get('app_version')
+        platform = request.GET.get('platform')
 
         # Perform the app version check logic here
         # For simplicity, I'm assuming you have stored version numbers in a dictionary
@@ -25,5 +23,5 @@ def checkAppVersion(request):
         return JsonResponse({'result': result})
 
     else:
-        # If the request method is not POST, return an error response
+        # If the request method is not GET, return an error response
         return JsonResponse({'error': 'Invalid request method'}, status=400)
