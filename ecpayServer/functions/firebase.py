@@ -76,6 +76,7 @@ def add_trip_to_history(user_ref, finish_time, trip_ref, moneyViaWallet):
         # Get the user document
         user_doc_ref = db.document(user_ref.path)
         user_doc = user_doc_ref.get()
+        print(user_doc)
 
         # Check if the user document exists
         if user_doc.exists:
@@ -91,6 +92,8 @@ def add_trip_to_history(user_ref, finish_time, trip_ref, moneyViaWallet):
                     # Set the status to 'success' if the trip already exists
                     trip['status'] = 'success'
                     user_doc_ref.update({'trip_history': trip_history, 'account_balance': account_balance})
+                    print(trip_history)
+                    print('The trips has already exists.')
                     return True
                 
             # Calculate the reverse index
@@ -166,6 +169,8 @@ def add_order_to_trip(trip_ref, passenger_ref, create_time, total_price, passeng
                     existing_order['status'] == status
                 # Add transactionId to the existing order
                 existing_order['transactionId'].append(transactionId)
+                print(existing_order)
+                print('Order has already exists')
             else:
                 # Create a new order
                 new_order = {
@@ -197,7 +202,7 @@ def add_order_to_trip(trip_ref, passenger_ref, create_time, total_price, passeng
 
             # Update the trip document with the new orders list and other fields
             trip_doc_ref.update({
-                'orders': orders if existing_order_index is not None else existing_order,
+                'orders': orders if existing_order_index == None else existing_order,
                 'current_available_seats': updated_seats,
                 'passenger_userIds': passenger_user_ids,
                 'included_users': included_users,

@@ -18,7 +18,6 @@ def receive_payment_info(request):
         check_mac_value = request.POST.get('CheckMacValue')
 
         result = read_transaction_from_firebase(merchant_trade_no)
-        print(result)
         transaction_time = result.get('transactionTime', '')
         buyerRef = result.get('user', '')
         tripReference = result.get('tripRef', '')
