@@ -16,8 +16,6 @@ def receive_payment_info(request):
         rtn_code = request.POST.get('RtnCode')
         trade_no = request.POST.get('TradeNo')
         check_mac_value = request.POST.get('CheckMacValue')
-        credit_refund_id = request.POST.get('CreditRefundId')
-        print(credit_refund_id)
 
         result = read_transaction_from_firebase(merchant_trade_no)
         transaction_time = result.get('transactionTime', '')
@@ -45,8 +43,8 @@ def receive_payment_info(request):
 
         tradeResult = query_order(merchant_trade_no)
 
-        print(tradeResult)
-        print(credit_refund_id)
+        print(tradeResult['gwsr'])
+        credit_refund_id = tradeResult['gwsr']
 
         if (check_mac_value == checkMac):
             result = query_order(merchant_trade_no)
