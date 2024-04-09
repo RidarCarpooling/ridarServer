@@ -42,13 +42,9 @@ def receive_payment_info(request):
         
         checkMac = gen_check_mac_value(all_params)
 
-        tradeResult = query_order(merchant_trade_no)
-
-        print(tradeResult['gwsr'])
-        credit_refund_id = tradeResult['gwsr']
-
         if (check_mac_value == checkMac):
-            result = query_order(merchant_trade_no)
+            tradeResult = query_order(merchant_trade_no)
+            credit_refund_id = tradeResult['gwsr']
             if ((rtn_code == '1' or rtn_code == 1) and tradeResult['TradeStatus'] == '1'):
                 update_transaction_data(orderId=merchant_trade_no, transaction_data=result, paymentStatus='paid', tradeNo=trade_no, credit_refund_id=credit_refund_id)
                 add_order_to_trip(tripReference, buyerRef, transaction_time, total_price, num_of_passengers, user_name, transaction_type, merchant_trade_no)

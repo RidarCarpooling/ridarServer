@@ -51,14 +51,12 @@ def update_transaction_data(orderId, transaction_data, paymentStatus, tradeNo, c
     Update transaction data in Firestore based on the orderId.
     """
     # Read transaction data from Firestore
-    
     if transaction_data:
         transaction_data['paymentStatus'] = paymentStatus
         transaction_data['tradeNo'] = tradeNo
         if credit_refund_id:
             transaction_data['creditRefundId'] = credit_refund_id
-        
-        print(transaction_data)
+
         # Write updated transaction data to Firestore
         write_transaction_to_firebase(orderId, transaction_data)
         
