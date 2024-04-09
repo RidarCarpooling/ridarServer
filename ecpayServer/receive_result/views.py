@@ -17,6 +17,7 @@ def receive_payment_info(request):
         trade_no = request.POST.get('TradeNo')
         check_mac_value = request.POST.get('CheckMacValue')
         credit_refund_id = request.POST.get('CreditRefundId')
+        print(credit_refund_id)
 
         result = read_transaction_from_firebase(merchant_trade_no)
         transaction_time = result.get('transactionTime', '')
@@ -42,9 +43,14 @@ def receive_payment_info(request):
         
         checkMac = gen_check_mac_value(all_params)
 
+        tradeResult = query_order(merchant_trade_no)
+
+        print(tradeResult)
+        print(credit_refund_id)
+
         if (check_mac_value == checkMac):
             result = query_order(merchant_trade_no)
-            if ((rtn_code == '1' or rtn_code == 1) and result['TradeStatus'] == '1'):
+            if ((rtn_code == '1' or rtn_code == 1) and tradeResult['TradeStatus'] == '1'):
                 update_transaction_data(orderId=merchant_trade_no, transaction_data=result, paymentStatus='paid', tradeNo=trade_no, credit_refund_id=credit_refund_id)
                 add_order_to_trip(tripReference, buyerRef, transaction_time, total_price, num_of_passengers, user_name, transaction_type, merchant_trade_no)
                 add_trip_to_history(buyerRef, finish_time, tripReference, moneyViaWallet)
