@@ -8,7 +8,7 @@ from datetime import timedelta
 from .order_search import query_order
 
 @csrf_exempt
-async def receive_payment_info(request):
+def receive_payment_info(request):
     if request.method == 'POST':
         all_params = request.POST
         
@@ -47,7 +47,7 @@ async def receive_payment_info(request):
             if ((rtn_code == '1' or rtn_code == 1) and tradeResult['TradeStatus'] == '1'):
                 update_transaction_data(orderId=merchant_trade_no, transaction_data=result, paymentStatus='paid', tradeNo=trade_no, credit_refund_id=credit_refund_id)
                 add_order_to_trip(tripReference, buyerRef, transaction_time, total_price, num_of_passengers, user_name, transaction_type, merchant_trade_no)
-                await add_trip_to_history(buyerRef, finish_time, tripReference, moneyViaWallet)
+                add_trip_to_history(buyerRef, finish_time, tripReference, moneyViaWallet)
                 create_notifications_doc(included_users, transaction_type)
                 if email != '':
                     send_notification(final_price, user_name, email)
