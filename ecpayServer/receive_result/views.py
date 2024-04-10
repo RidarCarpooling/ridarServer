@@ -48,7 +48,7 @@ def receive_payment_info(request):
                 update_transaction_data(orderId=merchant_trade_no, transaction_data=result, paymentStatus='paid', tradeNo=trade_no, credit_refund_id=credit_refund_id)
                 add_order_to_trip(tripReference, buyerRef, transaction_time, total_price, num_of_passengers, user_name, transaction_type, merchant_trade_no)
                 add_trip_to_history(buyerRef, finish_time, tripReference, moneyViaWallet)
-                create_notifications_doc(included_users, transaction_type)
+                create_notifications_doc(included_users, transaction_type, tripReference)
                 if email != '':
                     send_notification(final_price, user_name, email)
 

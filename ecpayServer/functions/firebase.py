@@ -190,6 +190,10 @@ def add_order_to_trip(trip_ref, passenger_ref, create_time, total_price, passeng
             current_available_seats = trip_data.get('current_available_seats', 0)
             updated_seats = max(0, current_available_seats - passengers)
 
+            pendingRequest = trip_data.get('pendingRequest', 0)
+            if status == 'matching':
+                pendingRequest += 1
+
             passenger_user_ids = trip_data.get('passenger_userIds', [])
             passenger_user_ids.append(passenger_ref)
             passenger_user_ids = list(set(passenger_user_ids))
@@ -207,7 +211,8 @@ def add_order_to_trip(trip_ref, passenger_ref, create_time, total_price, passeng
                 'current_available_seats': updated_seats,
                 'passenger_userIds': passenger_user_ids,
                 'included_users': included_users,
-                'passengers_num': updated_passengers_num
+                'passengers_num': updated_passengers_num,
+                'pendingRequest': pendingRequest
             })
             print('Add order to trip successfully!')
             return True
@@ -217,7 +222,7 @@ def add_order_to_trip(trip_ref, passenger_ref, create_time, total_price, passeng
         return False, f"An error occurred: {e}"
 
 
-def create_notifications_doc(included_users, transaction_type):
+def create_notifications_doc(included_users, transaction_type, tripRef):
     """
     Create a notifications document in Firestore.
     """
@@ -232,7 +237,8 @@ def create_notifications_doc(included_users, transaction_type):
                 'text': '用戶成功加入旅程，歡迎私訊對方確認旅程細節。',
                 'text_eng': 'The user has successfully joined the trip and is welcome to send a message to the other party to confirm the trip details.',
                 'time': datetime.now(),
-                'included_users': included_users
+                'included_users': included_users,
+                'tripRef': tripRef,
             }
         else:
             notification_data = {
@@ -241,7 +247,8 @@ def create_notifications_doc(included_users, transaction_type):
                 'text': '有乘客希望加入您的旅程，趕快去同意吧！',
                 'text_eng': 'There is a passenger wants to join your journey, hurry up and agree!',
                 'time': datetime.now(),
-                'included_users': included_users
+                'included_users': included_users,
+                'tripRef': tripRef,
             }
 
         # Add the notification document to Firestore
@@ -270,8 +277,6 @@ def update_account_balance(user_ref, moneyReturnToWallet):
 
             account_balance += moneyReturnToWallet
             user_doc_ref.update({'account_balance': account_balance})
-
-            
 
             print('Refund to wallet successfully')
             return True
