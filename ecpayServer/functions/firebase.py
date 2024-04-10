@@ -76,7 +76,11 @@ def add_trip_to_history(user_ref, finish_time, trip_ref, moneyViaWallet):
         user_doc_ref = db.document(user_ref.path)
         user_doc = user_doc_ref.get()
 
+        print(user_ref.path)
+        print(user_doc)
+        print(user_doc.to_dict())
         # Check if the user document exists
+        
         if user_doc.exists:
             # Get the current trip history list
             trip_history = user_doc.to_dict().get('trip_history', [])
@@ -121,7 +125,7 @@ def add_trip_to_history(user_ref, finish_time, trip_ref, moneyViaWallet):
             print('Add trip to history successfully.')
             return True
         else:
-            return False
+            return False, "User doc doesn't exist"
     except Exception as e:
         return False, f"An error occurred: {e}"
     
