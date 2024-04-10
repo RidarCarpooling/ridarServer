@@ -72,11 +72,9 @@ def add_trip_to_history(user_ref, finish_time, trip_ref, moneyViaWallet):
     # Get the Firestore client
     
     try:
-
         # Get the user document
         user_doc_ref = db.document(user_ref.path)
         user_doc = user_doc_ref.get()
-        print(user_doc)
 
         # Check if the user document exists
         if user_doc.exists:
@@ -84,11 +82,15 @@ def add_trip_to_history(user_ref, finish_time, trip_ref, moneyViaWallet):
             trip_history = user_doc.to_dict().get('trip_history', [])
             account_balance = user_doc.get('account_balance', 0)
 
+            print(trip_history)
             if moneyViaWallet > 0 and account_balance > 0:
                 account_balance = max(0, account_balance - moneyViaWallet)
 
+            print(1)
             for trip in trip_history:
+                print(2)
                 if trip['tripRef'] == trip_ref:
+                    print(3)
                     # Set the status to 'success' if the trip already exists
                     trip['status'] = 'success'
                     user_doc_ref.update({'trip_history': trip_history, 'account_balance': account_balance})
@@ -169,7 +171,6 @@ def add_order_to_trip(trip_ref, passenger_ref, create_time, total_price, passeng
                     existing_order['status'] == status
                 # Add transactionId to the existing order
                 existing_order['transactionId'].append(transactionId)
-                print(existing_order)
                 print('Order has already exists')
             else:
                 # Create a new order
