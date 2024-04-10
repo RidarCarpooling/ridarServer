@@ -79,14 +79,12 @@ def add_trip_to_history(user_ref, finish_time, trip_ref, moneyViaWallet):
         # Check if the user document exists
         
         if user_doc.exists:
-            print(user_doc.to_dict())
             # Get the current trip history list
-            trip_history = user_doc.get('trip_history', [])
+            user_data = user_doc.to_dict()
+            trip_history = user_data.get('trip_history', [])
             print(trip_history)
             account_balance = user_doc.get('account_balance', 0)
             print(account_balance)
-
-            print(trip_history)
             if moneyViaWallet > 0 and account_balance > 0:
                 account_balance = max(0, account_balance - moneyViaWallet)
 
