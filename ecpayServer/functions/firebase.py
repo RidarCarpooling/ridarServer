@@ -168,6 +168,7 @@ def add_order_to_trip(trip_ref, passenger_ref, create_time, total_price, passeng
                     existing_order['status'] == status
                 # Add transactionId to the existing order
                 existing_order['transactionId'].append(transactionId)
+                orders.append(existing_order)
                 print('Order has already exists')
             else:
                 # Create a new order
@@ -202,7 +203,7 @@ def add_order_to_trip(trip_ref, passenger_ref, create_time, total_price, passeng
 
             # Update the trip document with the new orders list and other fields
             trip_doc_ref.update({
-                'orders': orders if existing_order_index == None else existing_order,
+                'orders': orders,
                 'current_available_seats': updated_seats,
                 'passenger_userIds': passenger_user_ids,
                 'included_users': included_users,
