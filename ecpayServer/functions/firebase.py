@@ -65,7 +65,7 @@ def update_transaction_data(orderId, transaction_data, paymentStatus, tradeNo, c
         print("Transaction data not found for orderId:", orderId)
 
 
-def add_trip_to_history(user_ref, finish_time, trip_ref, moneyViaWallet):
+async def add_trip_to_history(user_ref, finish_time, trip_ref, moneyViaWallet):
     """
     Add a trip to the trip_history list of a user document in Firestore.
     """
@@ -74,14 +74,12 @@ def add_trip_to_history(user_ref, finish_time, trip_ref, moneyViaWallet):
     try:
         # Get the user document
         user_doc_ref = db.document(user_ref.path)
-        user_doc = user_doc_ref.get()
+        user_doc = await user_doc_ref.get()
 
-        print(user_ref.path)
-        print(user_doc)
-        print(user_doc.to_dict())
         # Check if the user document exists
         
         if user_doc.exists:
+            print(True)
             # Get the current trip history list
             trip_history = user_doc.to_dict().get('trip_history', [])
             account_balance = user_doc.get('account_balance', 0)
@@ -125,7 +123,8 @@ def add_trip_to_history(user_ref, finish_time, trip_ref, moneyViaWallet):
             print('Add trip to history successfully.')
             return True
         else:
-            return False, "User doc doesn't exist"
+            print("User doc doesn't exist.")
+            return False
     except Exception as e:
         return False, f"An error occurred: {e}"
     
