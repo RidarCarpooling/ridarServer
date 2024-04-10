@@ -82,21 +82,15 @@ def add_trip_to_history(user_ref, finish_time, trip_ref, moneyViaWallet):
             # Get the current trip history list
             user_data = user_doc.to_dict()
             trip_history = user_data.get('trip_history', [])
-            print(trip_history)
             account_balance = user_data.get('account_balance', 0)
-            print(account_balance)
             if moneyViaWallet > 0 and account_balance > 0:
                 account_balance = max(0, account_balance - moneyViaWallet)
 
-            print(1)
             for trip in trip_history:
-                print(2)
                 if trip['tripRef'] == trip_ref:
-                    print(3)
                     # Set the status to 'success' if the trip already exists
                     trip['status'] = 'success'
                     user_doc_ref.update({'trip_history': trip_history, 'account_balance': account_balance})
-                    print(trip_history)
                     print('The trips has already exists.')
                     return True
                 
@@ -197,9 +191,11 @@ def add_order_to_trip(trip_ref, passenger_ref, create_time, total_price, passeng
 
             passenger_user_ids = trip_data.get('passenger_userIds', [])
             passenger_user_ids.append(passenger_ref)
+            passenger_user_ids = list(set(passenger_user_ids))
 
             included_users = trip_data.get('included_users', [])
             included_users.append(passenger_ref)
+            included_users = list(set(included_users))
 
             passengers_num = trip_data.get('passengers_num', 0)
             updated_passengers_num = passengers_num + passengers
