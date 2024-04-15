@@ -18,6 +18,7 @@ def refund(request):
         time.sleep((datetime.strptime('20:30', '%H:%M') - current_time.time()).total_seconds())
         return HttpResponseBadRequest("Cannot process request at this time")
 
+    print('the code will keep going')
     orderId = request.POST.getlist('orderId', [])
     refundType = request.POST.get('refundType')
     print('Call the api successfully', orderId, refundType)
