@@ -1,6 +1,6 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseBadRequest
 from django.views.decorators.csrf import csrf_exempt
-from functions.firebase import read_transaction_from_firebase, write_transaction_to_firebase, update_account_balance
+from functions.firebase import read_transaction_from_firebase, write_transaction_to_firebase, update_account_balance, create_twqr_refund
 from datetime import datetime, timedelta
 import time
 from .credit_detail_search import search_single_transaction
@@ -8,15 +8,15 @@ from .credit_do_action import perform_credit_do_action
 
 @csrf_exempt
 def refund(request):
-
     authorization_token = request.headers.get('Authorization')
     if not is_valid_token(authorization_token):
         return HttpResponse('Unauthorized', status=401)
     
     current_time = datetime.now()
     if current_time.time() >= datetime.strptime('20:15', '%H:%M').time() and \
-            current_time.time() <= datetime.strptime('20:30', '%H:%M').time():
+            current_time.time() <= datetime.strptime('22:30', '%H:%M').time():
         time.sleep((datetime.strptime('20:30', '%H:%M') - current_time.time()).total_seconds())
+        return HttpResponseBadRequest("Cannot process request at this time")
 
     orderId = request.POST.getlist('orderId', [])
     refundType = request.POST.get('refundType')
@@ -35,6 +35,7 @@ def refund(request):
             totalCost = tradeDetails.get('passengerCost', 0)
             driverEarned = tradeDetails.get('driverEarned', 0)
             user_ref = tradeDetails.get('user', '')
+            paymentType = tradeDetails.get('paymentType', '')
         except Exception as e:
             print('Transaction data not found', e)
 
@@ -47,46 +48,89 @@ def refund(request):
 
         # return the money paid via credit
         if creditAmount > 0:
-            try:
-                result = search_single_transaction(creditRefundId, creditAmount)
-                status = result['RtnValue']['status']
-            except Exception as e:
-                print('An exception occurred while searching transaction:', e)
-                status = ''
+            if paymentType == 'ecpay':
+                try:
+                    result = search_single_transaction(creditRefundId, creditAmount)
+                    status = result['RtnValue']['status']
+                except Exception as e:
+                    print('An exception occurred while searching transaction:', e)
+                    status = ''
 
-            # full refund
-            if refundType == 'full': 
-                if status == '已授權':
-                    perform_credit_do_action(orderId, tradeNo, creditAmount, action='N')
-                elif status == '要關帳':
-                    perform_credit_do_action(orderId, tradeNo, creditAmount, action='E')
-                    perform_credit_do_action(orderId, tradeNo, creditAmount, action='N')
-                elif status == '已關帳':
-                    perform_credit_do_action(orderId, tradeNo, creditAmount, action='R')
+                # full refund
+                if refundType == 'full': 
+                    if status == '已授權':
+                        perform_credit_do_action(orderNo, tradeNo, creditAmount, action='N')
+                    elif status == '要關帳':
+                        perform_credit_do_action(orderNo, tradeNo, creditAmount, action='E')
+                        perform_credit_do_action(orderNo, tradeNo, creditAmount, action='N')
+                    elif status == '已關帳':
+                        perform_credit_do_action(orderId, tradeNo, creditAmount, action='R')
+                    
+                    tradeDetails['paymentStatus'] = 'cancelled'
+                    tradeDetails['passengerCost'] = 0
+                    tradeDetails['driverEarned'] = 0
+                    write_transaction_to_firebase(orderId, tradeDetails)
                 
+                # partial refund
+                elif refundType == 'partial' and moneyViaWallet <= totalCost *0.5:
+                    refund_to_credit = calculate_refund_value(startTime, creditAmount, moneyViaWallet)
+                    if refund_to_credit > 0:
+                        if status == '已授權':
+                            perform_credit_do_action(orderNo, tradeNo, creditAmount, action='C')
+                            perform_credit_do_action(orderNo, tradeNo, refund_to_credit, action='R')
+                        elif status in ['要關帳', '已關帳']:
+                            perform_credit_do_action(orderNo, tradeNo, refund_to_credit, action='R')
+                        tradeDetails['paymentStatus'] = 'cancelled'
+                        tradeDetails['passengerCost'] = totalCost * 0.5
+                        tradeDetails['driverEarned'] = driverEarned * 0.35
+                        write_transaction_to_firebase(orderNo, tradeDetails)
+                    # cannot refund
+                    else:
+                        tradeDetails['driverEarned'] = driverEarned * 0.7
+                        write_transaction_to_firebase(orderNo, tradeDetails)
+            
+            elif paymentType == 'twqr':
+                # full refund
+                if refundType == 'full': 
+                    tradeDetails['paymentStatus'] = 'cancelled'
+                    tradeDetails['passengerCost'] = 0
+                    tradeDetails['driverEarned'] = 0
+                    write_transaction_to_firebase(orderId, tradeDetails)
+                    create_twqr_refund(user_ref, orderNo, 0, creditAmount)
+                
+                # partial refund
+                elif refundType == 'partial' and moneyViaWallet <= totalCost *0.5:
+                    refund_to_credit = calculate_refund_value(startTime, creditAmount, moneyViaWallet)
+                    if refund_to_credit > 0:
+                        tradeDetails['paymentStatus'] = 'cancelled'
+                        tradeDetails['passengerCost'] = totalCost * 0.5
+                        tradeDetails['driverEarned'] = driverEarned * 0.35
+                        write_transaction_to_firebase(orderNo, tradeDetails)
+                        create_twqr_refund(user_ref, orderNo, refund_to_credit, creditAmount - refund_to_credit)
+                    # cannot refund
+                    elif refund_to_credit == False:
+                        tradeDetails['driverEarned'] = driverEarned * 0.7
+                        write_transaction_to_firebase(orderNo, tradeDetails)
+
+
+        elif creditAmount == 0:
+            if refundType == 'full':
                 tradeDetails['paymentStatus'] = 'cancelled'
                 tradeDetails['passengerCost'] = 0
                 tradeDetails['driverEarned'] = 0
                 write_transaction_to_firebase(orderId, tradeDetails)
-            
-            # partial refund
-            elif refundType == 'partial' and moneyViaWallet <= totalCost *0.5:
-                refund_to_credit = calculate_refund_value(startTime, creditAmount, moneyViaWallet)
-                if refund_to_credit > 0:
-                    if status == '已授權':
-                        perform_credit_do_action(orderId, tradeNo, creditAmount, action='C')
-                        perform_credit_do_action(orderId, tradeNo, refund_to_credit, action='R')
-                    elif status in ['要關帳', '已關帳']:
-                        perform_credit_do_action(orderId, tradeNo, refund_to_credit, action='R')
+            elif refundType == 'partial':
+                if timedelta(hours=72) > startTime - datetime.now() > timedelta(hours=24):
                     tradeDetails['paymentStatus'] = 'cancelled'
                     tradeDetails['passengerCost'] = totalCost * 0.5
                     tradeDetails['driverEarned'] = driverEarned * 0.35
-                    write_transaction_to_firebase(orderId, tradeDetails)
+                    write_transaction_to_firebase(orderNo, tradeDetails)
                 # cannot refund
                 else:
                     tradeDetails['driverEarned'] = driverEarned * 0.7
-                    write_transaction_to_firebase(orderId, tradeDetails)
-        
+                    write_transaction_to_firebase(orderNo, tradeDetails)
+
+            
     if moneyReturn > 0:
         update_account_balance(user_ref, moneyReturn)
 

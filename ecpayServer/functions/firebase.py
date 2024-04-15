@@ -46,7 +46,7 @@ def write_transaction_to_firebase(transaction_id, transaction_data):
     return transaction_id
 
 
-def update_transaction_data(orderId, transaction_data, paymentStatus, tradeNo, credit_refund_id):
+def update_transaction_data(orderId, transaction_data, paymentStatus, tradeNo, credit_refund_id, paymentType=None):
     """
     Update transaction data in Firestore based on the orderId.
     """
@@ -56,6 +56,8 @@ def update_transaction_data(orderId, transaction_data, paymentStatus, tradeNo, c
         transaction_data['tradeNo'] = tradeNo
         if credit_refund_id:
             transaction_data['creditRefundId'] = credit_refund_id
+        if paymentType == 'TWQR_OPAY':
+            transaction_data['paymentMethod'] = 'twqr'
 
         # Write updated transaction data to Firestore
         write_transaction_to_firebase(orderId, transaction_data)
@@ -284,3 +286,18 @@ def update_account_balance(user_ref, moneyReturnToWallet):
             return False
     except Exception as e:
         return False, f"An error occurred: {e}"
+    
+
+def create_twqr_refund(userRef, orderId, amount, moneyShouldReturn, refundType):
+    """
+    Create a new twqr refund document in Firestore.
+    """
+    refund_data = {
+        'userRef': userRef,
+        'orderId': orderId,
+        'currentTime': datetime.now(),
+        'amount_after_refund': amount,
+        'moneyShouldReturn': moneyShouldReturn, 
+        "refundType": refundType
+    }
+    db.collection('twqr_refund').document(orderId).set(refund_data)
