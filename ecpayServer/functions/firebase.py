@@ -288,7 +288,7 @@ def update_account_balance(user_ref, moneyReturnToWallet):
         return False, f"An error occurred: {e}"
     
 
-def create_twqr_refund(userRef, orderId, amount, moneyShouldReturn, refundType):
+def create_twqr_refund(userRef, orderId, amount, moneyShouldReturn, refundType, tripRef):
     """
     Create a new twqr refund document in Firestore.
     """
@@ -296,8 +296,21 @@ def create_twqr_refund(userRef, orderId, amount, moneyShouldReturn, refundType):
         'userRef': userRef,
         'orderId': orderId,
         'currentTime': datetime.now(),
-        'amount_after_refund': amount,
+        'amountAfterRefund': amount,
         'moneyShouldReturn': moneyShouldReturn, 
-        "refundType": refundType
+        "refundType": refundType,
+        'tripRef': tripRef
     }
     db.collection('twqr_refund').document(orderId).set(refund_data)
+
+def create_refundFailed(userRef, orderId, tripRef):
+    """
+    Create a new refundFailed document in Firestore.
+    """
+    refundFailed = {
+        'userRef': userRef,
+        'transactionIds': [orderId],
+        'refundTime': datetime.now(),
+        'tripRef': tripRef
+    }
+    db.collection('refundFailed').add(refundFailed)

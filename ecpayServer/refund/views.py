@@ -1,6 +1,6 @@
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.views.decorators.csrf import csrf_exempt
-from functions.firebase import read_transaction_from_firebase, write_transaction_to_firebase, update_account_balance, create_twqr_refund
+from functions.firebase import read_transaction_from_firebase, write_transaction_to_firebase, update_account_balance, create_twqr_refund, create_refundFailed
 from datetime import datetime, timedelta
 import time
 from .credit_detail_search import search_single_transaction
@@ -12,13 +12,16 @@ def refund(request):
     if not is_valid_token(authorization_token):
         return HttpResponse('Unauthorized', status=401)
     
+    if request.method != 'POST':
+        return HttpResponse('Method not allowed', status=405)
+    
     current_time = datetime.now()
     if current_time.time() >= datetime.strptime('20:15', '%H:%M').time() and \
-            current_time.time() <= datetime.strptime('22:30', '%H:%M').time():
+            current_time.time() <= datetime.strptime('20:30', '%H:%M').time():
         time.sleep((datetime.strptime('20:30', '%H:%M') - current_time.time()).total_seconds())
         return HttpResponseBadRequest("Cannot process request at this time")
+    
 
-    print('the code will keep going')
     orderId = request.POST.getlist('orderId', [])
     refundType = request.POST.get('refundType')
     print('Call the api successfully', orderId, refundType)
@@ -37,6 +40,7 @@ def refund(request):
             driverEarned = tradeDetails.get('driverEarned', 0)
             user_ref = tradeDetails.get('user', '')
             paymentType = tradeDetails.get('paymentType', '')
+            tripRef = tradeDetails.get('TripRef', '')
         except Exception as e:
             print('Transaction data not found', e)
 
@@ -55,7 +59,9 @@ def refund(request):
                     status = result['RtnValue']['status']
                 except Exception as e:
                     print('An exception occurred while searching transaction:', e)
+                    create_refundFailed(user_ref, orderNo, tripRef)
                     status = ''
+                    
 
                 # full refund
                 if refundType == 'full': 
@@ -97,7 +103,7 @@ def refund(request):
                     tradeDetails['passengerCost'] = 0
                     tradeDetails['driverEarned'] = 0
                     write_transaction_to_firebase(orderId, tradeDetails)
-                    create_twqr_refund(user_ref, orderNo, 0, creditAmount)
+                    create_twqr_refund(user_ref, orderNo, 0, creditAmount, paymentType, tripRef)
                 
                 # partial refund
                 elif refundType == 'partial' and moneyViaWallet <= totalCost *0.5:
@@ -107,7 +113,7 @@ def refund(request):
                         tradeDetails['passengerCost'] = totalCost * 0.5
                         tradeDetails['driverEarned'] = driverEarned * 0.35
                         write_transaction_to_firebase(orderNo, tradeDetails)
-                        create_twqr_refund(user_ref, orderNo, refund_to_credit, creditAmount - refund_to_credit)
+                        create_twqr_refund(user_ref, orderNo, refund_to_credit, creditAmount - refund_to_credit, paymentType, tripRef)
                     # cannot refund
                     elif refund_to_credit == False:
                         tradeDetails['driverEarned'] = driverEarned * 0.7
@@ -131,11 +137,8 @@ def refund(request):
                     tradeDetails['driverEarned'] = driverEarned * 0.7
                     write_transaction_to_firebase(orderNo, tradeDetails)
 
-            
     if moneyReturn > 0:
         update_account_balance(user_ref, moneyReturn)
-
-    return HttpResponse('Method not allowed', status=405)
 
 
 def calculate_refund_value(startTime, credit_amount, money_via_wallet):
