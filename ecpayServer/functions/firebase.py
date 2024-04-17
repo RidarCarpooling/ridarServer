@@ -168,6 +168,7 @@ def add_order_to_trip(trip_ref, passenger_ref, create_time, total_price, passeng
                     existing_order['totalPrice'] += total_price
                     existing_order['transactionId'].append(transactionId)
                 elif existing_order['status'] == 'cancel':
+                    print(status)
                     existing_order['passengers'] = passengers
                     existing_order['status'] == status
                     existing_order['totalPrice'] = total_price
