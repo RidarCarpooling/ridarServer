@@ -10,6 +10,7 @@ from .credit_do_action import perform_credit_do_action
 @csrf_exempt
 def refund(request):
     authorization_token = request.headers.get('Authorization')
+    print(authorization_token)
     if not is_valid_token(authorization_token):
         return HttpResponse('Unauthorized', status=401)
     
