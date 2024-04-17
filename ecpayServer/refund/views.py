@@ -22,7 +22,7 @@ def refund(request):
         return HttpResponseBadRequest("Cannot process request at this time")
     
 
-    orderId = request.POST.getlist('orderId', [])
+    orderId = request.POST.get('orderId', [])
     refundType = request.POST.get('refundType')
     print('Call the api successfully', orderId, refundType)
 
