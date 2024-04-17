@@ -22,14 +22,17 @@ def refund(request):
         return HttpResponseBadRequest("Cannot process request at this time")
     
 
-    orderId = request.POST.get('orderId', [])
-    refundType = request.POST.get('refundType')
-    print('Call the api successfully', orderId, refundType)
+    body_unicode = request.body.decode('utf-8')
+    body_data = json.loads(body_unicode)
+
+    # Now you can access the list variables in the body data
+    order_id_list = body_data.get('orderId', [])
+    refundType = body_data.get('refundType', '')
+    print('Call the api successfully', order_id_list, refundType)
 
     moneyReturn = 0
-    for orderNo in orderId:
+    for orderNo in order_id_list:
         print(orderNo)
-        print(orderId)
         try:
             # finalPrice + moneyViaWallet == total passenger cost
             tradeDetails = read_transaction_from_firebase(orderNo)
