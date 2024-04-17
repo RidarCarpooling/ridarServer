@@ -1,5 +1,4 @@
 from django.http import HttpResponse, HttpResponseBadRequest
-import json
 from django.views.decorators.csrf import csrf_exempt
 from functions.firebase import read_transaction_from_firebase, write_transaction_to_firebase, update_account_balance, create_twqr_refund, create_refundFailed
 from datetime import datetime, timedelta
@@ -24,12 +23,8 @@ def refund(request):
         return HttpResponseBadRequest("Cannot process request at this time")
     
 
-    body_unicode = request.body.decode('utf-8')
-    body_data = json.loads(body_unicode)
-
-    # Now you can access the list variables in the body data
-    order_id_list = body_data.get('orderId', [])
-    refundType = body_data.get('refundType', '')
+    order_id_list = request.POST.getlist('orderId', [])
+    refundType = request.POST.get('refundType')
     print('Call the api successfully', order_id_list, refundType)
 
     moneyReturn = 0
