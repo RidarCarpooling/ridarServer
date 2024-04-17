@@ -5,7 +5,6 @@ from datetime import datetime, timedelta
 import time
 from .credit_detail_search import search_single_transaction
 from .credit_do_action import perform_credit_do_action
-import pytz
 
 @csrf_exempt
 def refund(request):
@@ -151,8 +150,10 @@ def refund(request):
 
 def calculate_refund_value(startTime, credit_amount, money_via_wallet):
     start_timezone = startTime.tzinfo
+    print(start_timezone)
     # Get the current time in the same timezone as startTime
     current_time = datetime.now(start_timezone)
+    print(current_time)
     total = credit_amount + money_via_wallet
     if total * 0.5 >= money_via_wallet:
         if timedelta(hours=72) > startTime - current_time > timedelta(hours=24):
