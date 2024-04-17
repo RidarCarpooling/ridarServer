@@ -150,9 +150,12 @@ def refund(request):
 
 
 def calculate_refund_value(startTime, credit_amount, money_via_wallet):
+    start_timezone = startTime.tzinfo
+    # Get the current time in the same timezone as startTime
+    current_time = datetime.now(start_timezone)
     total = credit_amount + money_via_wallet
     if total * 0.5 >= money_via_wallet:
-        if timedelta(hours=72) > startTime - datetime.now() > timedelta(hours=24):
+        if timedelta(hours=72) > startTime - current_time > timedelta(hours=24):
             refund = total * 0.5 + money_via_wallet
             return refund
     return False
