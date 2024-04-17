@@ -67,7 +67,6 @@ def main(totalAmount, orderId, transactionTime, buyerId, tripReference, lang):
     #     'Redeem': 'N',
     #     'UnionPay': 0,
     # }
-    print(order_params)
 
     inv_params = {
         # 'RelateNumber': 'Tea0001', # 特店自訂編號
@@ -113,11 +112,11 @@ def main(totalAmount, orderId, transactionTime, buyerId, tripReference, lang):
     try:
         # 產生綠界訂單所需參數
         final_order_params = ecpay_payment_sdk.create_order(order_params)
-        print(final_order_params)
         # 產生 html 的 form 格式
         action_url = 'https://payment-stage.ecpay.com.tw/Cashier/AioCheckOut/V5'  # 測試環境
         # action_url = 'https://payment.ecpay.com.tw/Cashier/AioCheckOut/V5' # 正式環境
         html = ecpay_payment_sdk.gen_html_post_form(action_url, final_order_params)
+        print(html)
         return html
     except Exception as error:
         print('An exception happened: ' + str(error))
