@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 import time
 from .credit_detail_search import search_single_transaction
 from .credit_do_action import perform_credit_do_action
+import pytz
 
 @csrf_exempt
 def refund(request):
@@ -130,7 +131,9 @@ def refund(request):
                 tradeDetails['driverEarned'] = 0
                 write_transaction_to_firebase(orderNo, tradeDetails)
             elif refundType == 'partial':
-                if timedelta(hours=24) < (startTime - datetime.now()) < timedelta(hours=72):
+                start_timezone = startTime.tzinfo
+                current_time = datetime.now(start_timezone)
+                if timedelta(hours=24) < (startTime - current_time) < timedelta(hours=72):
                     tradeDetails['paymentStatus'] = 'cancelled'
                     tradeDetails['passengerCost'] = totalCost * 0.5
                     tradeDetails['driverEarned'] = driverEarned * 0.35
