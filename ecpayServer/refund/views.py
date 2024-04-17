@@ -119,7 +119,6 @@ def refund(request):
                         tradeDetails['driverEarned'] = driverEarned * 0.7
                         write_transaction_to_firebase(orderNo, tradeDetails)
 
-
         elif creditAmount == 0:
             if refundType == 'full':
                 tradeDetails['paymentStatus'] = 'cancelled'
@@ -139,6 +138,8 @@ def refund(request):
 
     if moneyReturn > 0:
         update_account_balance(user_ref, moneyReturn)
+        
+    return HttpResponse('Refund processed successfully.')
 
 
 def calculate_refund_value(startTime, credit_amount, money_via_wallet):
