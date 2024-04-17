@@ -23,7 +23,9 @@ def refund(request):
         return HttpResponseBadRequest("Cannot process request at this time")
     
 
-    order_id_list = request.POST.getlist('orderId', [])
+    order_ids_str = request.POST.getlist('orderId', [])
+    order_ids_str = order_ids_str.strip("[]")  # Remove square brackets
+    order_id_list = [order_id.strip() for order_id in order_ids_str.split(",")]  # Split by comma and strip whitespace
     refundType = request.POST.get('refundType')
     print('Call the api successfully', order_id_list, refundType)
 
