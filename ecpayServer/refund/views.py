@@ -28,6 +28,8 @@ def refund(request):
 
     moneyReturn = 0
     for orderNo in orderId:
+        print(orderNo)
+        print(orderId)
         try:
             # finalPrice + moneyViaWallet == total passenger cost
             tradeDetails = read_transaction_from_firebase(orderNo)
@@ -138,7 +140,7 @@ def refund(request):
 
     if moneyReturn > 0:
         update_account_balance(user_ref, moneyReturn)
-        
+
     return HttpResponse('Refund processed successfully.')
 
 
