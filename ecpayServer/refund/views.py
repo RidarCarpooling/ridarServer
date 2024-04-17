@@ -75,12 +75,12 @@ def refund(request):
                         perform_credit_do_action(orderNo, tradeNo, creditAmount, action='E')
                         perform_credit_do_action(orderNo, tradeNo, creditAmount, action='N')
                     elif status == '已關帳':
-                        perform_credit_do_action(orderId, tradeNo, creditAmount, action='R')
+                        perform_credit_do_action(orderNo, tradeNo, creditAmount, action='R')
                     
                     tradeDetails['paymentStatus'] = 'cancelled'
                     tradeDetails['passengerCost'] = 0
                     tradeDetails['driverEarned'] = 0
-                    write_transaction_to_firebase(orderId, tradeDetails)
+                    write_transaction_to_firebase(orderNo, tradeDetails)
                 
                 # partial refund
                 elif refundType == 'partial' and moneyViaWallet <= totalCost *0.5:
@@ -106,7 +106,7 @@ def refund(request):
                     tradeDetails['paymentStatus'] = 'cancelled'
                     tradeDetails['passengerCost'] = 0
                     tradeDetails['driverEarned'] = 0
-                    write_transaction_to_firebase(orderId, tradeDetails)
+                    write_transaction_to_firebase(orderNo, tradeDetails)
                     create_twqr_refund(user_ref, orderNo, 0, creditAmount, paymentType, tripRef)
                 
                 # partial refund
@@ -128,9 +128,9 @@ def refund(request):
                 tradeDetails['paymentStatus'] = 'cancelled'
                 tradeDetails['passengerCost'] = 0
                 tradeDetails['driverEarned'] = 0
-                write_transaction_to_firebase(orderId, tradeDetails)
+                write_transaction_to_firebase(orderNo, tradeDetails)
             elif refundType == 'partial':
-                if timedelta(hours=72) > startTime - datetime.now() > timedelta(hours=24):
+                if timedelta(hours=24) < (startTime - datetime.now()) < timedelta(hours=72):
                     tradeDetails['paymentStatus'] = 'cancelled'
                     tradeDetails['passengerCost'] = totalCost * 0.5
                     tradeDetails['driverEarned'] = driverEarned * 0.35
