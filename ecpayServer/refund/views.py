@@ -8,13 +8,12 @@ from .credit_do_action import perform_credit_do_action
 
 @csrf_exempt
 def refund(request):
-    authorization_token = request.headers.get('Authorization')
-    print(authorization_token)
-    if not is_valid_token(authorization_token):
-        return HttpResponse('Unauthorized', status=401)
-    
     if request.method != 'POST':
         return HttpResponse('Method not allowed', status=405)
+    
+    auth_token = request.POST.get('auth_key')
+    if not is_valid_token(auth_token):
+        return HttpResponse('Unauthorized', status=401)
     
     current_time = datetime.now()
     if current_time.time() >= datetime.strptime('20:15', '%H:%M').time() and \
@@ -24,6 +23,7 @@ def refund(request):
     
 
     order_ids_str = request.POST.getlist('orderId', [])
+    print(order_ids_str)
     order_ids_str = order_ids_str[0].strip("[]")  # Remove square brackets
     order_id_list = [order_id.strip() for order_id in order_ids_str.split(",")]  # Split by comma and strip whitespace
     refundType = request.POST.get('refundType')
