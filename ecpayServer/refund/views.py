@@ -8,8 +8,13 @@ from .credit_do_action import perform_credit_do_action
 
 @csrf_exempt
 def refund(request):
-    authorization_token = request.headers.get('Authorization')
-    print(authorization_token)
+    authorization_header = request.headers.get('Authorization')
+    if not authorization_header:
+        return HttpResponse('Unauthorized', status=401)
+    
+    # Extract the token from the Authorization header
+    authorization_token = authorization_header.split()[1] if len(authorization_header.split()) == 2 else None
+    
     if not is_valid_token(authorization_token):
         return HttpResponse('Unauthorized', status=401)
     
@@ -31,7 +36,6 @@ def refund(request):
 
     moneyReturn = 0
     for orderNo in order_id_list:
-        print(orderNo)
         try:
             # finalPrice + moneyViaWallet == total passenger cost
             tradeDetails = read_transaction_from_firebase(orderNo)
@@ -161,8 +165,8 @@ def calculate_refund_value(startTime, credit_amount, money_via_wallet):
             return refund
     return False
 
-import os
 
+import os
 def is_valid_token(token):
     valid_tokens = [os.environ.get('API_AUTH_TOKEN')]
     return token in valid_tokens
