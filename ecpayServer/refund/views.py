@@ -24,7 +24,7 @@ def refund(request):
     
 
     order_ids_str = request.POST.getlist('orderId', [])
-    order_ids_str = order_ids_str.strip("[]")  # Remove square brackets
+    order_ids_str = order_ids_str[0].strip("[]")  # Remove square brackets
     order_id_list = [order_id.strip() for order_id in order_ids_str.split(",")]  # Split by comma and strip whitespace
     refundType = request.POST.get('refundType')
     print('Call the api successfully', order_id_list, refundType)
