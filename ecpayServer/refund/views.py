@@ -24,15 +24,18 @@ def refund(request):
     
 
     order_ids_str = request.POST.getlist('orderId', [])
-    order_id_list = json.loads(order_ids_str)
+    # order_id_list = json.loads(order_ids_str)
+    print(type(order_ids_str))
+    print(order_ids_str[0])
+    order_ids_list = order_ids_str.strip('[]').split(',')
     # print(order_ids_str)
     # order_ids_str = order_ids_str[0].strip("[]")  # Remove square brackets
     # order_id_list = [order_id.strip() for order_id in order_ids_str.split(",")]  # Split by comma and strip whitespace
     refundType = request.POST.get('refundType')
-    print('Call the api successfully', order_id_list, refundType)
+    print('Call the api successfully', order_ids_list, refundType)
 
     moneyReturn = 0
-    for orderNo in order_id_list:
+    for orderNo in order_ids_list:
         try:
             # finalPrice + moneyViaWallet == total passenger cost
             tradeDetails = read_transaction_from_firebase(orderNo)
