@@ -28,7 +28,8 @@ def refund(request):
     print(type(order_ids_str))
     print(order_ids_str[0])
     print(type(order_ids_str[0]))
-    order_ids_list = order_ids_str[0]
+    order_ids_list = json.loads(order_ids_str[0])
+    print(type(order_ids_list))
     # print(order_ids_str)
     # order_ids_str = order_ids_str[0].strip("[]")  # Remove square brackets
     # order_id_list = [order_id.strip() for order_id in order_ids_str.split(",")]  # Split by comma and strip whitespace
