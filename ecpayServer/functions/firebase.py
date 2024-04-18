@@ -163,17 +163,27 @@ def add_order_to_trip(trip_ref, passenger_ref, create_time, total_price, passeng
             if existing_order_index is not None:
                 existing_order = orders[existing_order_index]
                 # Update passengers count based on order status
-                if existing_order['status'] in ['matching', 'success']:
+                if (existing_order['status'] == 'matching' and status == 'matching') or \
+                    (existing_order['status'] == 'success' and status == 'success'):
                     existing_order['passengers'] += passengers
                     existing_order['totalPrice'] += total_price
                     existing_order['transactionId'].append(transactionId)
                 elif existing_order['status'] == 'cancel':
-                    print(status)
                     existing_order['passengers'] = passengers
                     existing_order['status'] = status
                     existing_order['totalPrice'] = total_price
-                # Add transactionId to the existing order
                     existing_order['transactionId'] = [transactionId]
+                elif existing_order['status'] == 'success' and status == 'matching':
+                    if 'waitingOrder' not in order:
+                        order['waitingOrder'] = {
+                        'transactionIds': [transactionId],
+                        'passengers': passengers,
+                        'totalPrice': total_price
+                    }
+                    else:
+                        order['waitingOrder']['transactionIds'].append(transactionId)
+                        order['waitingOrder']['passengers'] += passengers
+                        order['waitingOrder']['totalPrice'] += total_price
                 print('Order has already exists')
             else:
                 # Create a new order
