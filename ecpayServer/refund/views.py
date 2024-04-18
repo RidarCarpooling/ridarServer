@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 import time
 from .credit_detail_search import search_single_transaction
 from .credit_do_action import perform_credit_do_action
+import json
 
 @csrf_exempt
 def refund(request):
@@ -23,9 +24,10 @@ def refund(request):
     
 
     order_ids_str = request.POST.getlist('orderId', [])
-    print(order_ids_str)
-    order_ids_str = order_ids_str[0].strip("[]")  # Remove square brackets
-    order_id_list = [order_id.strip() for order_id in order_ids_str.split(",")]  # Split by comma and strip whitespace
+    order_id_list = json.loads(order_ids_str)
+    # print(order_ids_str)
+    # order_ids_str = order_ids_str[0].strip("[]")  # Remove square brackets
+    # order_id_list = [order_id.strip() for order_id in order_ids_str.split(",")]  # Split by comma and strip whitespace
     refundType = request.POST.get('refundType')
     print('Call the api successfully', order_id_list, refundType)
 

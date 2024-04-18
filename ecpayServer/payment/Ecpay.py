@@ -116,7 +116,6 @@ def main(totalAmount, orderId, transactionTime, buyerId, tripReference, lang):
         action_url = 'https://payment-stage.ecpay.com.tw/Cashier/AioCheckOut/V5'  # 測試環境
         # action_url = 'https://payment.ecpay.com.tw/Cashier/AioCheckOut/V5' # 正式環境
         html = ecpay_payment_sdk.gen_html_post_form(action_url, final_order_params)
-        print(html)
         return html
     except Exception as error:
         print('An exception happened: ' + str(error))
