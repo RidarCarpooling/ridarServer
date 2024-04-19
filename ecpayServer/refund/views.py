@@ -21,10 +21,10 @@ def refund(request):
             current_time.time() <= datetime.strptime('20:30', '%H:%M').time():
         time.sleep((datetime.strptime('20:30', '%H:%M') - current_time.time()).total_seconds())
         return HttpResponseBadRequest("Cannot process request at this time")
-    
 
     order_ids_str = request.POST.getlist('orderId', [])
     # order_id_list = json.loads(order_ids_str)
+    print(order_ids_str)
     order_ids_list = json.loads(order_ids_str[0])
     # print(order_ids_str)
     # order_ids_str = order_ids_str[0].strip("[]")  # Remove square brackets
