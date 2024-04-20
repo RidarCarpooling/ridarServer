@@ -53,7 +53,7 @@ def refund(request):
 
         start_timezone = startTime.tzinfo
         current_time = datetime.now(start_timezone)
-        
+
         # return the money paid via wallet
         if moneyViaWallet > 0:
             if refundType == 'full' or (refundType == 'partial' and timedelta(hours=72) < startTime - current_time):
@@ -127,7 +127,7 @@ def refund(request):
                         tradeDetails['passengerCost'] = 0
                         tradeDetails['driverEarned'] = 0
                         write_transaction_to_firebase(orderNo, tradeDetails)
-                        create_twqr_refund(user_ref, orderNo, creditAmount, 0, refundType, tripRef)
+                        create_twqr_refund(user_ref, orderNo, 0, creditAmount, refundType, tripRef)
                     
                     # partial refund
                     elif refundType == 'partial' and moneyViaWallet <= totalCost *0.5:
