@@ -44,7 +44,7 @@ def refund(request):
             totalCost = tradeDetails.get('passengerCost', 0)
             driverEarned = tradeDetails.get('driverEarned', 0)
             user_ref = tradeDetails.get('user', '')
-            paymentType = tradeDetails.get('paymentType', '')
+            paymentType = tradeDetails.get('paymentMethod', '')
             tripRef = tradeDetails.get('TripRef', '')
         except Exception as e:
             print('Transaction data not found', e)
