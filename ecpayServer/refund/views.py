@@ -179,7 +179,7 @@ def calculate_refund_value(startTime, credit_amount, money_via_wallet):
     total = credit_amount + money_via_wallet
     if total * 0.5 >= money_via_wallet:
         if timedelta(hours=72) > startTime - current_time > timedelta(hours=24):
-            refund = total * 0.5 + money_via_wallet
+            refund = total * 0.5
             return round(refund)
     return False
 
