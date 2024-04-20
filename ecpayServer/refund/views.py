@@ -80,7 +80,7 @@ def refund(request):
 
                 try:
                     # full refund
-                    if refundType == 'full': 
+                    if refundType == 'full' or (refundType == 'partial' and timedelta(hours=72) <= startTime - current_time): 
                         print('full')
                         if status == '已授權':
                             perform_credit_do_action(orderNo, tradeNo, creditAmount, action='N')
@@ -96,52 +96,54 @@ def refund(request):
                         write_transaction_to_firebase(orderNo, tradeDetails)
                     
                     # partial refund
-                    elif refundType == 'partial' and moneyViaWallet <= totalCost *0.5:
+                    elif refundType == 'partial' and  timedelta(hours=72) > startTime - current_time >= timedelta(hours=24):
                         print('partial')
-                        refund_to_credit = calculate_refund_value(startTime, creditAmount, moneyViaWallet)
-                        print(refund_to_credit)
-                        if refund_to_credit > 0:
-                            if status == '已授權':
-                                perform_credit_do_action(orderNo, tradeNo, creditAmount, action='C')
-                                perform_credit_do_action(orderNo, tradeNo, refund_to_credit, action='R')
-                            elif status in ['要關帳', '已關帳']:
-                                perform_credit_do_action(orderNo, tradeNo, refund_to_credit, action='R')
-                            tradeDetails['paymentStatus'] = 'cancelled'
-                            tradeDetails['passengerCost'] = round(totalCost * 0.5)
-                            tradeDetails['driverEarned'] = round(driverEarned * 0.35)
-                            write_transaction_to_firebase(orderNo, tradeDetails)
-                        # cannot refund
-                        else:
-                            tradeDetails['driverEarned'] = round(driverEarned * 0.7)
-                            write_transaction_to_firebase(orderNo, tradeDetails)
+                        tradeDetails['paymentStatus'] = 'cancelled'
+                        tradeDetails['passengerCost'] = round(totalCost * 0.5)
+                        tradeDetails['driverEarned'] = round(driverEarned * 0.35)
+                        write_transaction_to_firebase(orderNo, tradeDetails)
+                        
+                        if moneyViaWallet <= totalCost *0.5:
+                            refund_to_credit = round(totalCost*0.5)
+                            print(refund_to_credit)
+
+                            if refund_to_credit > 0:
+                                if status == '已授權':
+                                    perform_credit_do_action(orderNo, tradeNo, creditAmount, action='C')
+                                    perform_credit_do_action(orderNo, tradeNo, refund_to_credit, action='R')
+                                elif status in ['要關帳', '已關帳']:
+                                    perform_credit_do_action(orderNo, tradeNo, refund_to_credit, action='R')
+
+                    elif startTime - current_time < timedelta(hours=24) and refundType == 'partial':    
+                        tradeDetails['driverEarned'] = round(driverEarned * 0.7)
+                        write_transaction_to_firebase(orderNo, tradeDetails)
                 
                 except Exception as e:
                     print('An exception occurred while refund ecpay:', e)
                     create_refundFailed(user_ref, orderNo, tripRef)
 
+
             elif paymentMethod == 'twqr':
                 # full refund
                 try: 
                     print('twqr')
-                    if refundType == 'full' or (refundType == 'partial' and timedelta(hours=72) < startTime - current_time): 
+                    if refundType == 'full' or (refundType == 'partial' and timedelta(hours=72) <= startTime - current_time): 
                         tradeDetails['paymentStatus'] = 'cancelled'
                         tradeDetails['passengerCost'] = 0
                         tradeDetails['driverEarned'] = 0
                         write_transaction_to_firebase(orderNo, tradeDetails)
                         create_twqr_refund(user_ref, orderNo, 0, creditAmount, refundType, tripRef)
                     
-                    # partial refund
-                    elif refundType == 'partial' and moneyViaWallet <= totalCost *0.5:
-                        refund_to_credit = calculate_refund_value(startTime, creditAmount, moneyViaWallet)
-                        print(refund_to_credit)
-                        if refund_to_credit > 0:
-                            tradeDetails['paymentStatus'] = 'cancelled'
-                            tradeDetails['passengerCost'] = round(totalCost * 0.5)
-                            tradeDetails['driverEarned'] = round(driverEarned * 0.35)
-                            write_transaction_to_firebase(orderNo, tradeDetails)
+                    elif timedelta(hours=72) > startTime - current_time >= timedelta(hours=24) and refundType == 'partial':
+                        tradeDetails['paymentStatus'] = 'cancelled'
+                        tradeDetails['passengerCost'] = round(totalCost * 0.5)
+                        tradeDetails['driverEarned'] = round(driverEarned * 0.35)
+                        write_transaction_to_firebase(orderNo, tradeDetails)
+                        if moneyViaWallet <= totalCost *0.5:
+                            refund_to_credit = round(totalCost*0.5)
                             create_twqr_refund(user_ref, orderNo, refund_to_credit, totalCost - refund_to_credit - moneyViaWallet, refundType, tripRef)
-                        # cannot refund
-                        elif refund_to_credit == False:
+                    
+                    elif startTime - current_time < timedelta(hours=24) and refundType == 'partial':
                             tradeDetails['driverEarned'] = round(driverEarned * 0.7)
                             write_transaction_to_firebase(orderNo, tradeDetails)
 
@@ -177,16 +179,16 @@ def refund(request):
     return HttpResponse('Refund processed successfully.')
 
 
-def calculate_refund_value(startTime, credit_amount, money_via_wallet):
-    start_timezone = startTime.tzinfo
-    # Get the current time in the same timezone as startTime
-    current_time = datetime.now(start_timezone)
-    total = credit_amount + money_via_wallet
-    if total * 0.5 >= money_via_wallet:
-        if timedelta(hours=72) > startTime - current_time > timedelta(hours=24):
-            refund = total * 0.5
-            return round(refund)
-    return False
+# def calculate_refund_value(startTime, credit_amount, money_via_wallet):
+#     start_timezone = startTime.tzinfo
+#     # Get the current time in the same timezone as startTime
+#     current_time = datetime.now(start_timezone)
+#     total = credit_amount + money_via_wallet
+#     if total * 0.5 >= money_via_wallet:
+#         if timedelta(hours=72) > startTime - current_time > timedelta(hours=24):
+#             refund = total * 0.5
+#             return round(refund)
+#     return False
 
 
 import os
