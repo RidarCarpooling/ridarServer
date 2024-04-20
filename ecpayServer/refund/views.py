@@ -51,6 +51,9 @@ def refund(request):
             create_refundFailed(user_ref, orderNo, tripRef)
             
 
+        start_timezone = startTime.tzinfo
+        current_time = datetime.now(start_timezone)
+        
         # return the money paid via wallet
         if moneyViaWallet > 0:
             if refundType == 'full' or (refundType == 'partial' and timedelta(hours=72) < startTime - current_time):
