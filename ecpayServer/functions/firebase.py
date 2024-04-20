@@ -282,12 +282,9 @@ def update_account_balance(user_ref, moneyReturnToWallet):
     # Get the Firestore client
     
     try:
-        print('call update function')
         # Get the user document
         user_doc_ref = db.document(user_ref.path)
         user_doc = user_doc_ref.get()
-
-        print(user_doc)
         # Check if the user document exists
         if user_doc.exists:
             user_data = user_doc.to_dict()

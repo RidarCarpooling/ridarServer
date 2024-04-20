@@ -59,8 +59,9 @@ def refund(request):
                 moneyReturn += min(moneyViaWallet, totalCost * 0.5)
 
         print(moneyReturn)
-        # return the money paid via credit
         print(creditAmount)
+        # return the money paid via credit
+
         if creditAmount > 0:
             if paymentMethod == 'ecpay':
                 print('ecpay')
@@ -133,7 +134,7 @@ def refund(request):
                             tradeDetails['passengerCost'] = round(totalCost * 0.5)
                             tradeDetails['driverEarned'] = round(driverEarned * 0.35)
                             write_transaction_to_firebase(orderNo, tradeDetails)
-                            create_twqr_refund(user_ref, orderNo, refund_to_credit, creditAmount - refund_to_credit, refundType, tripRef)
+                            create_twqr_refund(user_ref, orderNo, refund_to_credit, totalCost - refund_to_credit, refundType, tripRef)
                         # cannot refund
                         elif refund_to_credit == False:
                             tradeDetails['driverEarned'] = round(driverEarned * 0.7)
@@ -164,7 +165,6 @@ def refund(request):
 
     if moneyReturn > 0:
         result = update_account_balance(user_ref, moneyReturn)
-        print(result)
         if not result:
             create_refundFailed(user_ref, order_ids_list, tripRef)
             return HttpResponse('Refund Failed.')
