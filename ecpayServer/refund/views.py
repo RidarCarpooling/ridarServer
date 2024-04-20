@@ -48,6 +48,8 @@ def refund(request):
             tripRef = tradeDetails.get('TripRef', '')
         except Exception as e:
             print('Transaction data not found', e)
+            create_refundFailed(user_ref, orderNo, tripRef)
+            
 
         # return the money paid via wallet
         if moneyViaWallet > 0:
@@ -71,64 +73,73 @@ def refund(request):
                     status = ''
                     
 
-                # full refund
-                if refundType == 'full': 
-                    print('full')
-                    if status == '已授權':
-                        perform_credit_do_action(orderNo, tradeNo, creditAmount, action='N')
-                    elif status == '要關帳':
-                        perform_credit_do_action(orderNo, tradeNo, creditAmount, action='E')
-                        perform_credit_do_action(orderNo, tradeNo, creditAmount, action='N')
-                    elif status == '已關帳':
-                        perform_credit_do_action(orderNo, tradeNo, creditAmount, action='R')
-                    
-                    tradeDetails['paymentStatus'] = 'cancelled'
-                    tradeDetails['passengerCost'] = 0
-                    tradeDetails['driverEarned'] = 0
-                    write_transaction_to_firebase(orderNo, tradeDetails)
-                
-                # partial refund
-                elif refundType == 'partial' and moneyViaWallet <= totalCost *0.5:
-                    print('partial')
-                    refund_to_credit = calculate_refund_value(startTime, creditAmount, moneyViaWallet)
-                    if refund_to_credit > 0:
+                try:
+                    # full refund
+                    if refundType == 'full': 
+                        print('full')
                         if status == '已授權':
-                            perform_credit_do_action(orderNo, tradeNo, creditAmount, action='C')
-                            perform_credit_do_action(orderNo, tradeNo, refund_to_credit, action='R')
-                        elif status in ['要關帳', '已關帳']:
-                            perform_credit_do_action(orderNo, tradeNo, refund_to_credit, action='R')
+                            perform_credit_do_action(orderNo, tradeNo, creditAmount, action='N')
+                        elif status == '要關帳':
+                            perform_credit_do_action(orderNo, tradeNo, creditAmount, action='E')
+                            perform_credit_do_action(orderNo, tradeNo, creditAmount, action='N')
+                        elif status == '已關帳':
+                            perform_credit_do_action(orderNo, tradeNo, creditAmount, action='R')
+                        
                         tradeDetails['paymentStatus'] = 'cancelled'
-                        tradeDetails['passengerCost'] = round(totalCost * 0.5)
-                        tradeDetails['driverEarned'] = round(driverEarned * 0.35)
+                        tradeDetails['passengerCost'] = 0
+                        tradeDetails['driverEarned'] = 0
                         write_transaction_to_firebase(orderNo, tradeDetails)
-                    # cannot refund
-                    else:
-                        tradeDetails['driverEarned'] = round(driverEarned * 0.7)
-                        write_transaction_to_firebase(orderNo, tradeDetails)
-            
+                    
+                    # partial refund
+                    elif refundType == 'partial' and moneyViaWallet <= totalCost *0.5:
+                        print('partial')
+                        refund_to_credit = calculate_refund_value(startTime, creditAmount, moneyViaWallet)
+                        if refund_to_credit > 0:
+                            if status == '已授權':
+                                perform_credit_do_action(orderNo, tradeNo, creditAmount, action='C')
+                                perform_credit_do_action(orderNo, tradeNo, refund_to_credit, action='R')
+                            elif status in ['要關帳', '已關帳']:
+                                perform_credit_do_action(orderNo, tradeNo, refund_to_credit, action='R')
+                            tradeDetails['paymentStatus'] = 'cancelled'
+                            tradeDetails['passengerCost'] = round(totalCost * 0.5)
+                            tradeDetails['driverEarned'] = round(driverEarned * 0.35)
+                            write_transaction_to_firebase(orderNo, tradeDetails)
+                        # cannot refund
+                        else:
+                            tradeDetails['driverEarned'] = round(driverEarned * 0.7)
+                            write_transaction_to_firebase(orderNo, tradeDetails)
+                except Exception as e:
+                    print('An exception occurred while refund ecpay:', e)
+                    create_refundFailed(user_ref, orderNo, tripRef)
+
             elif paymentType == 'twqr':
                 # full refund
-                print('twqr')
-                if refundType == 'full': 
-                    tradeDetails['paymentStatus'] = 'cancelled'
-                    tradeDetails['passengerCost'] = 0
-                    tradeDetails['driverEarned'] = 0
-                    write_transaction_to_firebase(orderNo, tradeDetails)
-                    create_twqr_refund(user_ref, orderNo, 0, creditAmount, paymentType, tripRef)
-                
-                # partial refund
-                elif refundType == 'partial' and moneyViaWallet <= totalCost *0.5:
-                    refund_to_credit = calculate_refund_value(startTime, creditAmount, moneyViaWallet)
-                    if refund_to_credit > 0:
+                try: 
+                    print('twqr')
+                    if refundType == 'full': 
                         tradeDetails['paymentStatus'] = 'cancelled'
-                        tradeDetails['passengerCost'] = round(totalCost * 0.5)
-                        tradeDetails['driverEarned'] = round(driverEarned * 0.35)
+                        tradeDetails['passengerCost'] = 0
+                        tradeDetails['driverEarned'] = 0
                         write_transaction_to_firebase(orderNo, tradeDetails)
-                        create_twqr_refund(user_ref, orderNo, refund_to_credit, creditAmount - refund_to_credit, paymentType, tripRef)
-                    # cannot refund
-                    elif refund_to_credit == False:
-                        tradeDetails['driverEarned'] = round(driverEarned * 0.7)
-                        write_transaction_to_firebase(orderNo, tradeDetails)
+                        create_twqr_refund(user_ref, orderNo, 0, creditAmount, paymentType, tripRef)
+                    
+                    # partial refund
+                    elif refundType == 'partial' and moneyViaWallet <= totalCost *0.5:
+                        refund_to_credit = calculate_refund_value(startTime, creditAmount, moneyViaWallet)
+                        if refund_to_credit > 0:
+                            tradeDetails['paymentStatus'] = 'cancelled'
+                            tradeDetails['passengerCost'] = round(totalCost * 0.5)
+                            tradeDetails['driverEarned'] = round(driverEarned * 0.35)
+                            write_transaction_to_firebase(orderNo, tradeDetails)
+                            create_twqr_refund(user_ref, orderNo, refund_to_credit, creditAmount - refund_to_credit, paymentType, tripRef)
+                        # cannot refund
+                        elif refund_to_credit == False:
+                            tradeDetails['driverEarned'] = round(driverEarned * 0.7)
+                            write_transaction_to_firebase(orderNo, tradeDetails)
+
+                except Exception as e:
+                    print('An exception occurred while refund twqr:', e)
+                    create_refundFailed(user_ref, orderNo, tripRef)
 
         elif creditAmount == 0:
             if refundType == 'full':
@@ -150,9 +161,11 @@ def refund(request):
                     write_transaction_to_firebase(orderNo, tradeDetails)
 
     if moneyReturn > 0:
-        print('returning')
         result = update_account_balance(user_ref, moneyReturn)
         print(result)
+        if not result:
+            create_refundFailed(user_ref, order_ids_list, tripRef)
+            return HttpResponse('Refund Failed.')
 
     return HttpResponse('Refund processed successfully.')
 
