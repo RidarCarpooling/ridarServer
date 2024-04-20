@@ -158,7 +158,6 @@ def refund(request):
 
 def calculate_refund_value(startTime, credit_amount, money_via_wallet):
     start_timezone = startTime.tzinfo
-    print(start_timezone)
     # Get the current time in the same timezone as startTime
     current_time = datetime.now(start_timezone)
     total = credit_amount + money_via_wallet

@@ -289,10 +289,11 @@ def update_account_balance(user_ref, moneyReturnToWallet):
         if user_doc.exists:
             # Get the current trip history list
             account_balance = user_doc.get('account_balance', 0)
+            print('Account balance before returning', account_balance)
 
             account_balance += moneyReturnToWallet
             user_doc_ref.update({'account_balance': account_balance})
-
+            print(account_balance)
             print('Refund to wallet successfully')
             return True
         else:
