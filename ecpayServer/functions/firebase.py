@@ -84,7 +84,6 @@ def add_trip_to_history(user_ref, finish_time, trip_ref, moneyViaWallet):
             # Get the current trip history list
             user_data = user_doc.to_dict()
             trip_history = user_data.get('trip_history', [])
-            print(trip_history)
             account_balance = user_data.get('account_balance', 0)
             if moneyViaWallet > 0 and account_balance > 0:
                 account_balance = max(0, account_balance - moneyViaWallet)
@@ -93,7 +92,6 @@ def add_trip_to_history(user_ref, finish_time, trip_ref, moneyViaWallet):
                 if trip['tripRef'] == trip_ref:
                     # Set the status to 'success' if the trip already exists
                     trip['status'] = 'success'
-                    print(trip['status'])
                     user_doc_ref.update({'trip_history': trip_history, 'account_balance': account_balance})
                     print('The trips has already exists.')
                     return True
