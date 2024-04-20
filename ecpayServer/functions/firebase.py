@@ -299,7 +299,7 @@ def update_account_balance(user_ref, moneyReturnToWallet):
         else:
             return False
     except Exception as e:
-        return False, f"An error occurred: {e}"
+        return False
     
 
 def create_twqr_refund(userRef, orderId, amount, moneyShouldReturn, refundType, tripRef):

@@ -151,7 +151,9 @@ def refund(request):
 
     if moneyReturn > 0:
         print('returning')
-        update_account_balance(user_ref, moneyReturn)
+        print(user_ref)
+        result = update_account_balance(user_ref, moneyReturn)
+        print(result)
 
     return HttpResponse('Refund processed successfully.')
 
