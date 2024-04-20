@@ -151,7 +151,6 @@ def refund(request):
 
     if moneyReturn > 0:
         print('returning')
-        print(user_ref)
         result = update_account_balance(user_ref, moneyReturn)
         print(result)
 
