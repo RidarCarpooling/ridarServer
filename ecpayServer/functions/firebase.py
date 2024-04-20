@@ -320,7 +320,7 @@ def create_twqr_refund(userRef, orderId, amount, moneyShouldReturn, refundType, 
     }
     db.collection('twqr_refund').document(orderId).set(refund_data)
 
-def create_refundFailed(userRef, orderId, tripRef):
+def create_refundFailed(userRef, orderId, tripRef, refundType):
     """
     Create a new refundFailed document in Firestore.
     """
@@ -328,6 +328,7 @@ def create_refundFailed(userRef, orderId, tripRef):
         'userRef': userRef,
         'transactionIds': [orderId],
         'refundTime': datetime.now(),
-        'tripRef': tripRef
+        'tripRef': tripRef,
+        'refundType': refundType
     }
     db.collection('refundFailed').add(refundFailed)

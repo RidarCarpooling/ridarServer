@@ -46,7 +46,6 @@ def refund(request):
             user_ref = tradeDetails.get('user', '')
             paymentMethod = tradeDetails.get('paymentMethod', '')
             tripRef = tradeDetails.get('tripRef', '')
-            print(tripRef)
         except Exception as e:
             print('Transaction data not found', e)
             create_refundFailed(user_ref, orderNo, tripRef)
@@ -70,7 +69,7 @@ def refund(request):
                     status = result['RtnValue']['status']
                 except Exception as e:
                     print('An exception occurred while searching transaction:', e)
-                    create_refundFailed(user_ref, orderNo, tripRef)
+                    create_refundFailed(user_ref, orderNo, tripRef, refundType)
                     status = ''
                     
 
