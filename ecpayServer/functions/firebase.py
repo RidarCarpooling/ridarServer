@@ -158,6 +158,7 @@ def add_order_to_trip(trip_ref, passenger_ref, create_time, total_price, passeng
                     existing_order_index = i
                     break
 
+            pendingRequest = trip_data.get('pendingRequest', 0)
             # If an existing order is found
             if existing_order_index is not None:
                 existing_order = orders[existing_order_index]
@@ -173,6 +174,7 @@ def add_order_to_trip(trip_ref, passenger_ref, create_time, total_price, passeng
                     existing_order['totalPrice'] = total_price
                     existing_order['transactionId'] = [transactionId]
                 elif existing_order['status'] == 'success' and status == 'matching':
+                    pendingRequest += 1
                     if 'waitingOrder' not in order:
                         order['waitingOrder'] = {
                         'transactionIds': [transactionId],
@@ -185,6 +187,8 @@ def add_order_to_trip(trip_ref, passenger_ref, create_time, total_price, passeng
                         order['waitingOrder']['totalPrice'] += total_price
                 print('Order has already exists')
             else:
+                if status == 'matching':
+                    pendingRequest += 1
                 # Create a new order
                 new_order = {
                     'transactionId': [transactionId],
@@ -203,10 +207,6 @@ def add_order_to_trip(trip_ref, passenger_ref, create_time, total_price, passeng
             # Update other fields in the trips collection
             current_available_seats = trip_data.get('current_available_seats', 0)
             updated_seats = max(0, current_available_seats - passengers)
-
-            pendingRequest = trip_data.get('pendingRequest', 0)
-            if status == 'matching':
-                pendingRequest += 1
 
             passenger_user_ids = trip_data.get('passenger_userIds', [])
             passenger_user_ids.append(passenger_ref)
