@@ -53,7 +53,7 @@ def refund(request):
 
         # return the money paid via wallet
         if moneyViaWallet > 0:
-            if refundType == 'full':
+            if refundType == 'full' or (refundType == 'partial' and timedelta(hours=72) < startTime - current_time):
                 moneyReturn += moneyViaWallet
             elif refundType == 'partial':
                 moneyReturn += min(moneyViaWallet, totalCost * 0.5)
@@ -110,6 +110,7 @@ def refund(request):
                         else:
                             tradeDetails['driverEarned'] = round(driverEarned * 0.7)
                             write_transaction_to_firebase(orderNo, tradeDetails)
+                
                 except Exception as e:
                     print('An exception occurred while refund ecpay:', e)
                     create_refundFailed(user_ref, orderNo, tripRef)
@@ -118,12 +119,12 @@ def refund(request):
                 # full refund
                 try: 
                     print('twqr')
-                    if refundType == 'full': 
+                    if refundType == 'full' or (refundType == 'partial' and timedelta(hours=72) < startTime - current_time): 
                         tradeDetails['paymentStatus'] = 'cancelled'
                         tradeDetails['passengerCost'] = 0
                         tradeDetails['driverEarned'] = 0
                         write_transaction_to_firebase(orderNo, tradeDetails)
-                        create_twqr_refund(user_ref, orderNo, 0, creditAmount, refundType, tripRef)
+                        create_twqr_refund(user_ref, orderNo, creditAmount, 0, refundType, tripRef)
                     
                     # partial refund
                     elif refundType == 'partial' and moneyViaWallet <= totalCost *0.5:
@@ -134,7 +135,7 @@ def refund(request):
                             tradeDetails['passengerCost'] = round(totalCost * 0.5)
                             tradeDetails['driverEarned'] = round(driverEarned * 0.35)
                             write_transaction_to_firebase(orderNo, tradeDetails)
-                            create_twqr_refund(user_ref, orderNo, refund_to_credit, totalCost - refund_to_credit, refundType, tripRef)
+                            create_twqr_refund(user_ref, orderNo, refund_to_credit, totalCost - refund_to_credit - moneyViaWallet, refundType, tripRef)
                         # cannot refund
                         elif refund_to_credit == False:
                             tradeDetails['driverEarned'] = round(driverEarned * 0.7)
@@ -145,7 +146,7 @@ def refund(request):
                     create_refundFailed(user_ref, orderNo, tripRef)
 
         elif creditAmount == 0:
-            if refundType == 'full':
+            if refundType == 'full' or (refundType == 'partial' and timedelta(hours=72) < startTime - current_time):
                 tradeDetails['paymentStatus'] = 'cancelled'
                 tradeDetails['passengerCost'] = 0
                 tradeDetails['driverEarned'] = 0
