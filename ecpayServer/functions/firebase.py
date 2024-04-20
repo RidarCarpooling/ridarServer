@@ -143,8 +143,6 @@ def add_order_to_trip(trip_ref, passenger_ref, create_time, total_price, passeng
         if trip_doc.exists:
             # Get the current trip data
             trip_data = trip_doc.to_dict()
-            print(trip_data)
-
             # Get the current orders list
             orders = trip_data.get('orders', [])
 
@@ -164,7 +162,6 @@ def add_order_to_trip(trip_ref, passenger_ref, create_time, total_price, passeng
 
             # If an existing order is found
             if existing_order_index is not None:
-                print('existing order')
                 existing_order = orders[existing_order_index]
                 # Update passengers count based on order status
                 if (existing_order['status'] == 'matching' and status == 'matching') or \
@@ -173,7 +170,6 @@ def add_order_to_trip(trip_ref, passenger_ref, create_time, total_price, passeng
                     existing_order['totalPrice'] += total_price
                     existing_order['transactionId'].append(transactionId)
                 elif existing_order['status'] == 'cancel':
-                    print('chaning cancel order')
                     existing_order['passengers'] = passengers
                     existing_order['status'] = status
                     existing_order['totalPrice'] = total_price
