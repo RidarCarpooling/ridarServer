@@ -1,6 +1,6 @@
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.views.decorators.csrf import csrf_exempt
-from functions.firebase import read_transaction_from_firebase, write_transaction_to_firebase, update_account_balance, create_twqr_refund, create_refundFailed
+from functions.firebase import read_transaction_from_firebase, write_transaction_to_firebase, update_account_balance, create_twqr_refund, create_refundFailed, get_email_and_name
 from datetime import datetime, timedelta
 import time
 from .credit_detail_search import search_single_transaction
@@ -27,6 +27,7 @@ def refund(request):
     print('Call the api successfully', order_ids_list, refundType)
 
     moneyReturn = 0
+    passenger_cost_total = 0
     for orderNo in order_ids_list:
         try:
             # finalPrice + moneyViaWallet == total passenger cost
@@ -102,6 +103,7 @@ def refund(request):
                             print('partial')
                             tradeDetails['paymentStatus'] = 'cancelled'
                             tradeDetails['passengerCost'] = round(totalCost * 0.5)
+                            passenger_cost_total += round(totalCost*0.5)
                             tradeDetails['driverEarned'] = round(driverEarned * 0.35)
                             write_transaction_to_firebase(orderNo, tradeDetails)
                             
@@ -118,6 +120,7 @@ def refund(request):
 
                         elif startTime - current_time < timedelta(hours=24) and refundType == 'partial':    
                             tradeDetails['driverEarned'] = round(driverEarned * 0.7)
+                            passenger_cost_total += totalCost
                             write_transaction_to_firebase(orderNo, tradeDetails)
                     
                     except Exception as e:
@@ -139,6 +142,7 @@ def refund(request):
                         elif timedelta(hours=72) > startTime - current_time >= timedelta(hours=24) and refundType == 'partial':
                             tradeDetails['paymentStatus'] = 'cancelled'
                             tradeDetails['passengerCost'] = round(totalCost * 0.5)
+                            passenger_cost_total += round(totalCost*0.5)
                             tradeDetails['driverEarned'] = round(driverEarned * 0.35)
                             write_transaction_to_firebase(orderNo, tradeDetails)
                             if moneyViaWallet <= totalCost *0.5:
@@ -147,6 +151,7 @@ def refund(request):
                         
                         elif startTime - current_time < timedelta(hours=24) and refundType == 'partial':
                                 tradeDetails['driverEarned'] = round(driverEarned * 0.7)
+                                passenger_cost_total += totalCost
                                 write_transaction_to_firebase(orderNo, tradeDetails)
 
                     except Exception as e:
@@ -165,11 +170,13 @@ def refund(request):
                     if timedelta(hours=24) < (startTime - current_time) < timedelta(hours=72):
                         tradeDetails['paymentStatus'] = 'cancelled'
                         tradeDetails['passengerCost'] = round(totalCost * 0.5)
+                        passenger_cost_total += round(totalCost*0.5)
                         tradeDetails['driverEarned'] = round(driverEarned * 0.35)
                         write_transaction_to_firebase(orderNo, tradeDetails)
                     # cannot refund
                     else:
                         tradeDetails['driverEarned'] = driverEarned * 0.7
+                        passenger_cost_total += totalCost
                         write_transaction_to_firebase(orderNo, tradeDetails)
 
     if moneyReturn > 0:
@@ -179,19 +186,17 @@ def refund(request):
             return HttpResponse('Refund Failed.')
 
     
+
+    email = request.POST.get('email', '')
+    name = request.POST.get('name', '')
+    if email == '':
+        user_id = request.POST.get('user_id', '')
+        email, name = get_email_and_name(user_id)
+
+    if email != '' and email != False:
+        send_refund_notification(passenger_cost_total, name, email)
     return HttpResponse('Refund processed successfully.')
 
-
-# def calculate_refund_value(startTime, credit_amount, money_via_wallet):
-#     start_timezone = startTime.tzinfo
-#     # Get the current time in the same timezone as startTime
-#     current_time = datetime.now(start_timezone)
-#     total = credit_amount + money_via_wallet
-#     if total * 0.5 >= money_via_wallet:
-#         if timedelta(hours=72) > startTime - current_time > timedelta(hours=24):
-#             refund = total * 0.5
-#             return round(refund)
-#     return False
 
 
 import os
