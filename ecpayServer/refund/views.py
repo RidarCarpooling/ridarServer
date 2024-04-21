@@ -189,8 +189,8 @@ def refund(request):
 
     email = request.POST.get('email', '')
     name = request.POST.get('name', '')
-    if email == '':
-        user_id = request.POST.get('user_id', '')
+    user_id = request.POST.get('user_id', '')
+    if email == ''  and user_id != '':
         email, name = get_email_and_name(user_id)
 
     if email != '' and email != False:
