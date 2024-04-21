@@ -328,3 +328,20 @@ def create_refundFailed(userRef, orderId, tripRef, refundType):
         'refundType': refundType
     }
     db.collection('refundFailed').add(refundFailed)
+
+def get_email_and_name(user_ref):
+    try:
+        # Get the user document
+        user_doc_ref = db.document(user_ref.path)
+        user_doc = user_doc_ref.get()
+        # Check if the user document exists
+        if user_doc.exists:
+            user_data = user_doc.to_dict()
+            # Get the current trip history list
+            email = user_data.get('email', '')
+            name = user_data.get('display_name', '')
+            return email, name
+        else:
+            return False
+    except Exception as e:
+        return False
