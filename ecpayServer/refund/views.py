@@ -15,6 +15,7 @@ def refund(request):
     
     auth_token = request.POST.get('auth_key')
     if not is_valid_token(auth_token):
+        print(auth_token)
         return HttpResponse('Unauthorized', status=401)
 
     order_ids_str = request.POST.getlist('orderId', [])
