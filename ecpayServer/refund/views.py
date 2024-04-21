@@ -6,6 +6,7 @@ import time
 from .credit_detail_search import search_single_transaction
 from .credit_do_action import perform_credit_do_action
 import json
+from functions.onesignal_send_email import send_refund_notification
 
 @csrf_exempt
 def refund(request):
@@ -15,12 +16,6 @@ def refund(request):
     auth_token = request.POST.get('auth_key')
     if not is_valid_token(auth_token):
         return HttpResponse('Unauthorized', status=401)
-    
-    current_time = datetime.now()
-    if current_time.time() >= datetime.strptime('20:15', '%H:%M').time() and \
-            current_time.time() <= datetime.strptime('20:30', '%H:%M').time():
-        time.sleep((datetime.strptime('20:30', '%H:%M') - current_time.time()).total_seconds())
-        return HttpResponseBadRequest("Cannot process request at this time")
 
     order_ids_str = request.POST.getlist('orderId', [])
     # order_id_list = json.loads(order_ids_str)
@@ -51,6 +46,12 @@ def refund(request):
             print('Transaction data not found', e)
             create_refundFailed(user_ref, orderNo, tripRef)
             
+        current_time = datetime.now()
+        if current_time.time() >= datetime.strptime('20:15', '%H:%M').time() and \
+                current_time.time() <= datetime.strptime('20:30', '%H:%M').time() and \
+                paymentMethod == 'ecpay':
+            time.sleep((datetime.strptime('20:30', '%H:%M') - current_time.time()).total_seconds())
+            return HttpResponseBadRequest("Cannot process request at this time")
 
         start_timezone = startTime.tzinfo
         current_time = datetime.now(start_timezone)
@@ -177,6 +178,7 @@ def refund(request):
             create_refundFailed(user_ref, order_ids_list, tripRef)
             return HttpResponse('Refund Failed.')
 
+    
     return HttpResponse('Refund processed successfully.')
 
 
