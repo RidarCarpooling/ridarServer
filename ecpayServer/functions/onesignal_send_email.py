@@ -37,8 +37,6 @@ def send_notification(amount, first_name, email):
 
 def send_refund_notification(finalCost, name, email):
     configuration = onesignal.Configuration(
-        # app_key = "NWM3OTJmOTQtN2Q3Yy00NWQ5LTlmNzYtYWNmNDE0NDU3YTJh",
-        # user_key = "f24dc978-8e85-4812-b040-60743e706da9"
         app_key = os.environ.get('APP_KEY'),
         user_key = os.environ.get("USER_KEY")
     )
@@ -63,5 +61,3 @@ def send_refund_notification(finalCost, name, email):
             print("Refund email sent successfully!")
         except onesignal.ApiException as e:
             print('Exception when calling DefaultApi => create_notification: %s\n' % e)
-
-# send_refund_notification(100, 200, 'Yun', 'alex468250@gmail.com')

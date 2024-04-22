@@ -200,7 +200,9 @@ def add_order_to_trip(trip_ref, passenger_ref, create_time, total_price, passeng
                     'alreadyComment': False,
                     'userName': userName,
                     'isCommented': False,
-                    'showCommentWhileLoading': True
+                    'showCommentWhileLoading': True,
+                    'driverIssueProblem': False,
+                    'passengerIssueProblem': False
                 }
                 orders.append(new_order)
 
