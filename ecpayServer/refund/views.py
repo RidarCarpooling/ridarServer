@@ -119,7 +119,8 @@ def refund(request):
                                     elif status in ['要關帳', '已關帳']:
                                         perform_credit_do_action(orderNo, tradeNo, refund_to_credit, action='R')
 
-                        elif startTime - current_time < timedelta(hours=24) and refundType == 'partial':    
+                        elif startTime - current_time < timedelta(hours=24) and refundType == 'partial':
+                            tradeDetails['paymentStatus'] = 'cancelled'
                             tradeDetails['driverEarned'] = round(driverEarned * 0.7)
                             passenger_cost_total += totalCost
                             write_transaction_to_firebase(orderNo, tradeDetails)
@@ -151,6 +152,7 @@ def refund(request):
                                 create_twqr_refund(user_ref, orderNo, refund_to_credit, totalCost - refund_to_credit - moneyViaWallet, refundType, tripRef)
                         
                         elif startTime - current_time < timedelta(hours=24) and refundType == 'partial':
+                                tradeDetails['paymentStatus'] = 'cancelled'
                                 tradeDetails['driverEarned'] = round(driverEarned * 0.7)
                                 passenger_cost_total += totalCost
                                 write_transaction_to_firebase(orderNo, tradeDetails)
@@ -176,6 +178,7 @@ def refund(request):
                         write_transaction_to_firebase(orderNo, tradeDetails)
                     # cannot refund
                     else:
+                        tradeDetails['paymentStatus'] = 'cancelled'
                         tradeDetails['driverEarned'] = driverEarned * 0.7
                         passenger_cost_total += totalCost
                         write_transaction_to_firebase(orderNo, tradeDetails)
