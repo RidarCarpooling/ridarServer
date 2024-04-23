@@ -63,7 +63,7 @@ def refund(request):
             if moneyViaWallet > 0:
                 if refundType == 'full' or (refundType == 'partial' and timedelta(hours=72) < startTime - current_time):
                     moneyReturn += moneyViaWallet
-                elif refundType == 'partial':
+                elif refundType == 'partial' and startTime - current_time < timedelta(hours=24):
                     moneyReturn += min(moneyViaWallet, totalCost * 0.5)
 
             print(moneyReturn)
