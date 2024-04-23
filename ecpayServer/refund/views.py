@@ -78,7 +78,8 @@ def refund(request):
                         status = result['RtnValue']['status']
                     except Exception as e:
                         print('An exception occurred while searching transaction:', e)
-                        create_refundFailed(user_ref, orderNo, tripRef, refundType)
+                        if startTime - current_time > timedelta(hours=24):
+                            create_refundFailed(user_ref, orderNo, tripRef, refundType)
                         status = ''
                         
 
