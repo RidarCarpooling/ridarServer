@@ -1,8 +1,6 @@
 import importlib.util
 import time
-import pprint
 import os
-
 
 def query_order(orderId):
     # Load the module
