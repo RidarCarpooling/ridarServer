@@ -27,8 +27,8 @@ def query_order(orderId):
     
     try:
         # Set the query URL
-        query_url = 'https://payment-stage.ecpay.com.tw/Cashier/QueryTradeInfo/V5'  # Test environment
-
+        # query_url = 'https://payment-stage.ecpay.com.tw/Cashier/QueryTradeInfo/V5'  # Test environment
+        query_url = 'https://payment.ecpay.com.tw/Cashier/QueryTradeInfo/V5'  # 正式環境
         # Query the order
         query_result = ecpay_payment_sdk.order_search(
             action_url=query_url,
