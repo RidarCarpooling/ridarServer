@@ -7,10 +7,11 @@ import time
 @csrf_exempt
 def index(request):
     orderId = request.GET.get('orderId')
+    print(orderId)
     if not orderId:
         return HttpResponseNotFound("Order ID not provided")
 
-    time.sleep(0.5)
+    time.sleep(1)
     result = read_transaction_from_firebase(orderId)
 
     if not result:
