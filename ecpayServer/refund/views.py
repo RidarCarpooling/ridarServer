@@ -87,13 +87,17 @@ def refund(request):
                         # full refund
                         if refundType == 'full' or (refundType == 'partial' and timedelta(hours=72) <= startTime - current_time): 
                             print('full')
-                            if status == '已授權':
-                                perform_credit_do_action(orderNo, tradeNo, creditAmount, action='N')
-                            elif status == '要關帳':
-                                perform_credit_do_action(orderNo, tradeNo, creditAmount, action='E')
-                                perform_credit_do_action(orderNo, tradeNo, creditAmount, action='N')
-                            elif status == '已關帳':
-                                perform_credit_do_action(orderNo, tradeNo, creditAmount, action='R')
+                            try: 
+                                if status == '已授權':
+                                    perform_credit_do_action(orderNo, tradeNo, creditAmount, action='N')
+                                elif status == '要關帳':
+                                    perform_credit_do_action(orderNo, tradeNo, creditAmount, action='E')
+                                    perform_credit_do_action(orderNo, tradeNo, creditAmount, action='N')
+                                elif status == '已關帳':
+                                    perform_credit_do_action(orderNo, tradeNo, creditAmount, action='R')
+                            except Exception as e:
+                                print('An exception occured while performing credit do action')
+                                create_refundFailed(user_ref, orderNo, tripRef, refundType)
                             
                             tradeDetails['paymentStatus'] = 'cancelled'
                             tradeDetails['passengerCost'] = 0
@@ -112,14 +116,18 @@ def refund(request):
                             if moneyViaWallet <= totalCost *0.5:
                                 refund_to_credit = round(totalCost*0.5)
                                 print(refund_to_credit)
-
-                                if refund_to_credit > 0:
-                                    if status == '已授權':
-                                        perform_credit_do_action(orderNo, tradeNo, creditAmount, action='C')
-                                        perform_credit_do_action(orderNo, tradeNo, refund_to_credit, action='R')
-                                    elif status in ['要關帳', '已關帳']:
-                                        perform_credit_do_action(orderNo, tradeNo, refund_to_credit, action='R')
-
+                                
+                                try: 
+                                    if refund_to_credit > 0:
+                                        if status == '已授權':
+                                            perform_credit_do_action(orderNo, tradeNo, creditAmount, action='C')
+                                            perform_credit_do_action(orderNo, tradeNo, refund_to_credit, action='R')
+                                        elif status in ['要關帳', '已關帳']:
+                                            perform_credit_do_action(orderNo, tradeNo, refund_to_credit, action='R')
+                                except Exception as e:
+                                    print('An exception occured while performing credit do action')
+                                    create_refundFailed(user_ref, orderNo, tripRef, refundType)
+                                    
                         elif startTime - current_time < timedelta(hours=24) and refundType == 'partial':
                             tradeDetails['paymentStatus'] = 'cancelled'
                             tradeDetails['driverEarned'] = round(driverEarned * 0.7)
