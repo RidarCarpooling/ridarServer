@@ -2,6 +2,7 @@ from django.http import HttpResponse, HttpResponseNotFound
 from django.views.decorators.csrf import csrf_exempt
 from .Ecpay import main
 from functions.firebase import read_transaction_from_firebase
+import time
 
 @csrf_exempt
 def index(request):
@@ -9,6 +10,7 @@ def index(request):
     if not orderId:
         return HttpResponseNotFound("Order ID not provided")
 
+    time.sleep(300)
     result = read_transaction_from_firebase(orderId)
 
     if not result:
