@@ -11,7 +11,6 @@ def index(request):
     if not orderId:
         return HttpResponseNotFound("Order ID not provided")
 
-    time.sleep(10)
     result = read_transaction_from_firebase(orderId)
 
     if not result:
