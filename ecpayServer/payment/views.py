@@ -14,7 +14,8 @@ def index(request):
     result = read_transaction_from_firebase(orderId)
 
     if not result:
-        time.sleep(3) 
+        time.sleep(8) 
+        print('waiting')
         result = read_transaction_from_firebase(orderId)
         print(result)
         if not result:
