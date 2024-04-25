@@ -33,6 +33,10 @@ def receive_payment_info(request):
         moneyViaWallet = result.get('moneyViaWallet', '')
         email = result.get('email', '')
         driverRef = result.get('userPaid', '')
+        startPlace = result.get('startPlace', '')
+        endPlace = result.get("endPlace", '')
+        driverName = result.get('driverName', '')
+        passengerCost = result.get('passengerCost', '')
 
         if transaction_type == 'success':
             included_users = [buyerRef, driverRef]
@@ -50,7 +54,7 @@ def receive_payment_info(request):
                 add_trip_to_history(buyerRef, finish_time, tripReference, moneyViaWallet)
                 create_notifications_doc(included_users, transaction_type, tripReference)
                 if email != '':
-                    send_notification(final_price, user_name, email)
+                    send_notification(passengerCost, user_name, email, merchant_trade_no, start_time, finish_time, driverName, startPlace, endPlace, num_of_passengers)
 
                 if transaction_type == 'success':
                     if lang == 'ENG':

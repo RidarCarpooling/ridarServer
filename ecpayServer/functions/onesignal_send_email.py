@@ -3,7 +3,7 @@ from onesignal.api import default_api
 from onesignal.model.notification import Notification
 import os
 
-def send_notification(amount, first_name, email):
+def send_notification(passengerCost, name, email, orderId, startTime, finishTime, driverName, startPlace, endPlace, numOfPassengers):
     configuration = onesignal.Configuration(
         app_key = os.environ.get('APP_KEY'),
         user_key = os.environ.get("USER_KEY")
@@ -18,8 +18,16 @@ def send_notification(amount, first_name, email):
         # },
         "template_id": "3a7bb050-b37c-4aaf-9ca3-262790b96676",
         "custom_data": {
-            "first_name": first_name,
-            "amount": amount
+            "first_name": name,
+            "total_price": passengerCost,
+            "order_id": orderId,
+            "start_time": startTime,
+            "finish_time": finishTime,
+            "driver_name": driverName,
+            "start_place": startPlace,
+            "end_place": endPlace,
+            "passengers_num": numOfPassengers
+
         }
     }
 
