@@ -156,7 +156,6 @@ def refund(request):
                         elif timedelta(hours=72) > startTime - current_time >= timedelta(hours=24) and refundType == 'partial':
                             tradeDetails['paymentStatus'] = 'cancelled'
                             tradeDetails['passengerCost'] = round(totalCost * 0.5)
-                            passenger_cost_total += round(totalCost*0.5)
                             tradeDetails['driverEarned'] = round(driverEarned * 0.35)
                             write_transaction_to_firebase(orderNo, tradeDetails)
                             if moneyViaWallet <= totalCost *0.5:
@@ -166,7 +165,6 @@ def refund(request):
                         elif startTime - current_time < timedelta(hours=24) and refundType == 'partial':
                                 tradeDetails['paymentStatus'] = 'cancelled'
                                 tradeDetails['driverEarned'] = round(driverEarned * 0.7)
-                                passenger_cost_total += totalCost
                                 write_transaction_to_firebase(orderNo, tradeDetails)
 
                     except Exception as e:
@@ -185,14 +183,12 @@ def refund(request):
                     if timedelta(hours=24) < (startTime - current_time) < timedelta(hours=72):
                         tradeDetails['paymentStatus'] = 'cancelled'
                         tradeDetails['passengerCost'] = round(totalCost * 0.5)
-                        passenger_cost_total += round(totalCost*0.5)
                         tradeDetails['driverEarned'] = round(driverEarned * 0.35)
                         write_transaction_to_firebase(orderNo, tradeDetails)
                     # cannot refund
                     else:
                         tradeDetails['paymentStatus'] = 'cancelled'
                         tradeDetails['driverEarned'] = driverEarned * 0.7
-                        passenger_cost_total += totalCost
                         write_transaction_to_firebase(orderNo, tradeDetails)
 
     if moneyReturnToWallet > 0:
