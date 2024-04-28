@@ -173,6 +173,8 @@ def add_order_to_trip(trip_ref, passenger_ref, create_time, total_price, passeng
                     existing_order['status'] = status
                     existing_order['totalPrice'] = total_price
                     existing_order['transactionId'] = [transactionId]
+                    if status == 'matching':
+                        pendingRequest += 1
                 elif existing_order['status'] == 'success' and status == 'matching':
                     pendingRequest += 1
                     if 'waitingOrder' not in order:
