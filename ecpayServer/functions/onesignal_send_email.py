@@ -22,7 +22,7 @@ def send_notification(passengerCost, name, email, orderId, startTime, finishTime
             "total_price": passengerCost,
             "order_id": orderId,
             "start_time": startTime,
-            "finish_time": finishTime,
+            "end_time": finishTime,
             "driver_name": driverName,
             "start_place": startPlace,
             "end_place": endPlace,
@@ -43,7 +43,7 @@ def send_notification(passengerCost, name, email, orderId, startTime, finishTime
 
 
 
-def send_refund_notification(finalCost, name, email):
+def send_refund_notification(name, email, refund_price, orderId, startTime, finishTime, driverName, startPlace, endPlace, numOfPassengers):
     configuration = onesignal.Configuration(
         app_key = os.environ.get('APP_KEY'),
         user_key = os.environ.get("USER_KEY")
@@ -55,8 +55,15 @@ def send_refund_notification(finalCost, name, email):
         "target_channel": "email",
         "template_id": "4ff2f4c2-523c-49dc-8faa-5461b5caa021",
         "custom_data": {
-            "name": name,
-            "finalCost": finalCost,
+            "first_name": name,
+            "refund_price": refund_price,
+            "order_id": orderId,
+            "start_time": startTime,
+            "finish_time": finishTime,
+            "driver_name": driverName,
+            "start_place": startPlace,
+            "end_place": endPlace,
+            "passengers_num": numOfPassengers
         }
     }
 

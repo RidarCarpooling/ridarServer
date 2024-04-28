@@ -21,14 +21,11 @@ def refund(request):
     order_ids_str = request.POST.getlist('orderId', [])
     # order_id_list = json.loads(order_ids_str)
     order_ids_list = json.loads(order_ids_str[0])
-    # print(order_ids_str)
-    # order_ids_str = order_ids_str[0].strip("[]")  # Remove square brackets
-    # order_id_list = [order_id.strip() for order_id in order_ids_str.split(",")]  # Split by comma and strip whitespace
     refundType = request.POST.get('refundType')
     print('Call the api successfully', order_ids_list, refundType)
 
-    moneyReturn = 0
-    passenger_cost_total = 0
+    moneyReturnToWallet = 0
+    totalReturn = 0
     for orderNo in order_ids_list:
         try:
             # finalPrice + moneyViaWallet == total passenger cost
@@ -37,13 +34,18 @@ def refund(request):
             creditAmount = tradeDetails.get('finalPrice', 0)
             tradeNo = tradeDetails.get('tradeNo', '')
             startTime = tradeDetails.get('startTime', '')
+            finishTime = tradeDetails.get('finishTime', '')
             moneyViaWallet = tradeDetails.get('moneyViaWallet', 0)
             totalCost = tradeDetails.get('passengerCost', 0)
             driverEarned = tradeDetails.get('driverEarned', 0)
             user_ref = tradeDetails.get('user', '')
+            driverName = result.get('driverName', '')
             paymentMethod = tradeDetails.get('paymentMethod', '')
             paymentStatus = tradeDetails.get('paymentStatus', '')
             tripRef = tradeDetails.get('tripRef', '')
+            startPlace = result.get('startPlace', '')
+            endPlace = result.get("endPlace", '')
+            num_of_passengers = result.get('numOfPassengers', 0)
         except Exception as e:
             print('Transaction data not found', e)
             create_refundFailed(user_ref, orderNo, tripRef)
@@ -60,13 +62,16 @@ def refund(request):
 
         if paymentStatus != 'cancelled':
             # return the money paid via wallet
-            if moneyViaWallet > 0:
-                if refundType == 'full' or (refundType == 'partial' and timedelta(hours=72) < startTime - current_time):
-                    moneyReturn += moneyViaWallet
-                elif refundType == 'partial' and startTime - current_time > timedelta(hours=24):
-                    moneyReturn += min(moneyViaWallet, totalCost * 0.5)
+            if refundType == 'full' or (refundType == 'partial' and timedelta(hours=72) < startTime - current_time):
+                if moneyViaWallet > 0:
+                    moneyReturnToWallet += moneyViaWallet
+                totalReturn += totalCost
+            elif refundType == 'partial' and startTime - current_time > timedelta(hours=24):
+                if moneyViaWallet > 0:
+                    moneyViaWallet += min(moneyViaWallet, totalCost*0.5)
+                totalReturn += totalCost*0.5
 
-            print(moneyReturn)
+            print(moneyReturnToWallet)
             print(creditAmount)
             # return the money paid via credit
 
@@ -109,7 +114,6 @@ def refund(request):
                             print('partial')
                             tradeDetails['paymentStatus'] = 'cancelled'
                             tradeDetails['passengerCost'] = round(totalCost * 0.5)
-                            passenger_cost_total += round(totalCost*0.5)
                             tradeDetails['driverEarned'] = round(driverEarned * 0.35)
                             write_transaction_to_firebase(orderNo, tradeDetails)
                             
@@ -131,7 +135,6 @@ def refund(request):
                         elif startTime - current_time < timedelta(hours=24) and refundType == 'partial':
                             tradeDetails['paymentStatus'] = 'cancelled'
                             tradeDetails['driverEarned'] = round(driverEarned * 0.7)
-                            passenger_cost_total += totalCost
                             write_transaction_to_firebase(orderNo, tradeDetails)
                     
                     except Exception as e:
@@ -192,8 +195,8 @@ def refund(request):
                         passenger_cost_total += totalCost
                         write_transaction_to_firebase(orderNo, tradeDetails)
 
-    if moneyReturn > 0:
-        result = update_account_balance(user_ref, moneyReturn)
+    if moneyReturnToWallet > 0:
+        result = update_account_balance(user_ref, moneyReturnToWallet)
         if not result:
             create_refundFailed(user_ref, order_ids_list, tripRef)
             return HttpResponse('Refund Failed.')
@@ -207,7 +210,7 @@ def refund(request):
         email, name = get_email_and_name(user_id)
 
     if email != '' and email != False:
-        send_refund_notification(passenger_cost_total, name, email)
+        send_refund_notification(name, email, totalReturn, order_ids_str, startTime, finishTime, driverName, startPlace, endPlace, num_of_passengers)
     return HttpResponse('Refund processed successfully.')
 
 
