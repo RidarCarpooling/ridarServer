@@ -24,7 +24,7 @@ def main(totalAmount, orderId, transactionTime, buyerId, tripReference, lang):
         'ItemName': '共乘費用及平台服務費',
         'ReturnURL': 'https://server.ridar.com.tw/return',
         'ChoosePayment': 'ALL',
-        'ClientBackURL': f'https://www.ridar.com.tw/paymentResult/{orderId}?tripRef={tripReference}',
+        'ClientBackURL': f'https://www.ridar.com.tw/paymentResult/trips',
         # 'ItemURL': 'https://www.ecpay.com.tw/item_url.php',
         # 'Remark': '交易備註',
         # 'ChooseSubPayment': '',
