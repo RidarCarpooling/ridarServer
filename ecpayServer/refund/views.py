@@ -26,6 +26,7 @@ def refund(request):
 
     moneyReturnToWallet = 0
     totalReturn = 0
+    passengers = 0
     for orderNo in order_ids_list:
         try:
             # finalPrice + moneyViaWallet == total passenger cost
@@ -46,6 +47,7 @@ def refund(request):
             startPlace = tradeDetails.get('startPlace', '')
             endPlace = tradeDetails.get("endPlace", '')
             num_of_passengers = tradeDetails.get('numOfPassengers', 0)
+            passengers += num_of_passengers
         except Exception as e:
             print('Transaction data not found', e)
             create_refundFailed(user_ref, orderNo, tripRef)
@@ -206,7 +208,7 @@ def refund(request):
         email, name = get_email_and_name(user_id)
 
     if email != '' and email != False:
-        send_refund_notification(name, email, totalReturn, order_ids_str, startTime, finishTime, driverName, startPlace, endPlace, num_of_passengers)
+        send_refund_notification(name, email, totalReturn, order_ids_str, startTime, finishTime, driverName, startPlace, endPlace, passengers)
     return HttpResponse('Refund processed successfully.')
 
 

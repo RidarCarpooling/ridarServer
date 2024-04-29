@@ -2,12 +2,15 @@ import onesignal
 from onesignal.api import default_api
 from onesignal.model.notification import Notification
 import os
+import pytz
 
 def send_notification(passengerCost, name, email, orderId, startTime, finishTime, driverName, startPlace, endPlace, numOfPassengers):
     configuration = onesignal.Configuration(
         app_key = os.environ.get('APP_KEY'),
         user_key = os.environ.get("USER_KEY")
     )
+
+    utc_plus_8 = pytz.timezone('Asia/Shanghai')
 
     payload = {
         "app_id": "f24dc978-8e85-4812-b040-60743e706da9",
@@ -21,8 +24,8 @@ def send_notification(passengerCost, name, email, orderId, startTime, finishTime
             "first_name": name,
             "total_price": passengerCost,
             "order_id": orderId,
-            "start_time": startTime.strftime("%Y/%m/%d %H:%M"),
-            "end_time": finishTime.strftime("%Y/%m/%d %H:%M"),
+            "start_time": startTime.astimezone(utc_plus_8).strftime("%Y/%m/%d %H:%M"),
+            "end_time": finishTime.astimezone(utc_plus_8).strftime("%Y/%m/%d %H:%M"),
             "driver_name": driverName,
             "start_place": startPlace,
             "end_place": endPlace,
@@ -34,6 +37,8 @@ def send_notification(passengerCost, name, email, orderId, startTime, finishTime
     with onesignal.ApiClient(configuration) as api_client:
         api_instance = default_api.DefaultApi(api_client)
         notification = Notification(payload)
+
+        utc_plus_8 = pytz.timezone('Asia/Shanghai')
 
         try: 
             api_response = api_instance.create_notification(notification)
@@ -48,6 +53,7 @@ def send_refund_notification(name, email, refund_price, orderId, startTime, fini
         app_key = os.environ.get('APP_KEY'),
         user_key = os.environ.get("USER_KEY")
     )
+    utc_plus_8 = pytz.timezone('Asia/Shanghai')
 
     payload = {
         "app_id": "f24dc978-8e85-4812-b040-60743e706da9",
@@ -58,8 +64,8 @@ def send_refund_notification(name, email, refund_price, orderId, startTime, fini
             "first_name": name,
             "refund_price": refund_price,
             "order_id": orderId,
-            "start_time": startTime.strftime("%Y/%m/%d %H:%M"),
-            "end_time": finishTime.strftime("%Y/%m/%d %H:%M"),
+            "start_time": startTime.astimezone(utc_plus_8).strftime("%Y/%m/%d %H:%M"),
+            "end_time": finishTime.astimezone(utc_plus_8).strftime("%Y/%m/%d %H:%M"),
             "driver_name": driverName,
             "start_place": startPlace,
             "end_place": endPlace,
