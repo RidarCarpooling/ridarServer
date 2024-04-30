@@ -11,7 +11,7 @@ from datetime import datetime
 import os
 
 
-def main(totalAmount, orderId, transactionTime, buyerId, tripReference, lang):
+def main(totalAmount, orderId, transactionTime, buyerId, tripReference):
 
     order_params = {
         'MerchantTradeNo':  orderId,
