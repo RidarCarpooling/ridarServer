@@ -52,6 +52,7 @@ def refund(request):
             create_refundFailed(user_ref, orderNo, tripRef)
             
         current_time = datetime.now()
+        print(current_time)
         if current_time.time() >= datetime.strptime('20:15', '%H:%M').time() and \
                 current_time.time() <= datetime.strptime('20:30', '%H:%M').time() and \
                 paymentMethod == 'ecpay':
