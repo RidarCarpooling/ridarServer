@@ -194,6 +194,7 @@ def refund(request):
                         tradeDetails['driverEarned'] = driverEarned * 0.7
                         write_transaction_to_firebase(orderNo, tradeDetails)
 
+    print(moneyReturnToWallet)
     if moneyReturnToWallet > 0:
         result = update_account_balance(user_ref, moneyReturnToWallet)
         if not result:
