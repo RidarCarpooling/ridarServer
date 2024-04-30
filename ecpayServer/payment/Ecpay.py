@@ -40,8 +40,8 @@ def main(totalAmount, orderId, transactionTime, buyerId, tripReference, lang):
         # 'CustomField4': '',
         'EncryptType': 1,
     }
-    if lang == 'ENG':
-        order_params['Language'] = 'ENG'
+    # if lang == 'ENG':
+    #     order_params['Language'] = 'ENG'
     # extend_params_1 = {
     #     'ExpireDate': 7,
         # 'PaymentInfoURL': 'https://www.ecpay.com.tw/payment_info_url.php',
