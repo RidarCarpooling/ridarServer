@@ -80,7 +80,8 @@ def refund(request):
             if creditAmount > 0:
                 if paymentMethod == 'ecpay':
                     print('ecpay')
-                    if not (startTime - current_time < timedelta(hours=24) and refundType == 'partial'):
+                    if not ((startTime - current_time < timedelta(hours=24) and refundType == 'partial') or \
+                            timedelta(hours=72) > startTime - current_time >= timedelta(hours=24) and moneyViaWallet >= totalCost*0.5):
                         try:
                             result = search_single_transaction(creditRefundId, creditAmount)
                             status = result['RtnValue']['status']
