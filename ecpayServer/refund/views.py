@@ -7,6 +7,7 @@ from .credit_detail_search import search_single_transaction
 from .credit_do_action import perform_credit_do_action
 import json
 from functions.onesignal_send_email import send_refund_notification
+import pytz
 
 @csrf_exempt
 def refund(request):
@@ -51,14 +52,19 @@ def refund(request):
             print('Transaction data not found', e)
             create_refundFailed(user_ref, orderNo, tripRef)
             
+        utc_time = datetime.utcnow()
+        # Get the UTC+8 time zone
+        utc_plus_8 = pytz.timezone('Asia/Shanghai')
+        # Convert the current time to UTC+8
+        current_time = utc_time.astimezone(utc_plus_8)
+        print(current_time)
+        if current_time.time() >= datetime.strptime('20:30', '%H:%M').time() and \
+                current_time.time() <= datetime.strptime('21:30', '%H:%M').time() and \
+                paymentMethod == 'ecpay':
+            return HttpResponseBadRequest("Cannot process request at this time")
+
         start_timezone = startTime.tzinfo
         current_time = datetime.now(start_timezone)
-        print(current_time)
-        if current_time.time() >= datetime.strptime('20:15', '%H:%M').time() and \
-                current_time.time() <= datetime.strptime('20:30', '%H:%M').time() and \
-                paymentMethod == 'ecpay':
-            create_refundFailed(user_ref, orderNo, tripRef)
-            return HttpResponseBadRequest("Cannot process request at this time")
 
         if paymentStatus != 'cancelled':
             # return the money paid via wallet
