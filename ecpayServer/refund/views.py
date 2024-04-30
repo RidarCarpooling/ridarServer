@@ -52,8 +52,8 @@ def refund(request):
             create_refundFailed(user_ref, orderNo, tripRef)
             
         current_time = datetime.now()
-        if current_time.time() >= datetime.strptime('12:35', '%H:%M').time() and \
-                current_time.time() <= datetime.strptime('13:00', '%H:%M').time() and \
+        if current_time.time() >= datetime.strptime('12:15', '%H:%M').time() and \
+                current_time.time() <= datetime.strptime('12:30', '%H:%M').time() and \
                 paymentMethod == 'ecpay':
             return HttpResponseBadRequest("Cannot process request at this time")
 
