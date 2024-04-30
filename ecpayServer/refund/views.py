@@ -53,9 +53,7 @@ def refund(request):
             create_refundFailed(user_ref, orderNo, tripRef)
             
         utc_time = datetime.utcnow()
-        # Get the UTC+8 time zone
         utc_plus_8 = pytz.timezone('Asia/Shanghai')
-        # Convert the current time to UTC+8
         current_time = utc_time.astimezone(utc_plus_8)
         print(current_time)
         if current_time.time() >= datetime.strptime('20:30', '%H:%M').time() and \
