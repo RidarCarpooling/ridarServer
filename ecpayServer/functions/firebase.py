@@ -206,7 +206,6 @@ def add_order_to_trip(trip_ref, passenger_ref, create_time, total_price, passeng
                     'driverIssueProblem': False,
                     'passengerIssueProblem': False
                 }
-                print(new_order)
                 orders.append(new_order)
 
             # Update other fields in the trips collection
