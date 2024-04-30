@@ -55,7 +55,7 @@ def refund(request):
         if current_time.time() >= datetime.strptime('20:15', '%H:%M').time() and \
                 current_time.time() <= datetime.strptime('20:30', '%H:%M').time() and \
                 paymentMethod == 'ecpay':
-            time.sleep((datetime.strptime('20:30', '%H:%M') - current_time.time()).total_seconds())
+            create_refundFailed(user_ref, orderNo, tripRef)
             return HttpResponseBadRequest("Cannot process request at this time")
 
         start_timezone = startTime.tzinfo
