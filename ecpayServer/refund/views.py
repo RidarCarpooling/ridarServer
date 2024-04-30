@@ -52,7 +52,7 @@ def refund(request):
             print('Transaction data not found', e)
             create_refundFailed(user_ref, orderNo, tripRef)
             
-        utc_time = datetime.utcnow()
+        utc_time = datetime.now()
         utc_plus_8 = pytz.timezone('Asia/Shanghai')
         current_time = utc_time.astimezone(utc_plus_8)
         print(current_time)
