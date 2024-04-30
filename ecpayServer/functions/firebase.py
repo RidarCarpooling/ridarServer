@@ -315,7 +315,7 @@ def create_twqr_refund(userRef, orderId, amount, moneyShouldReturn, refundType, 
         'orderId': orderId,
         'currentTime': datetime.now(),
         'amountAfterRefund': amount,
-        'moneyShouldReturn': moneyShouldReturn, 
+        'moneyShouldReturn': moneyShouldReturn,
         "refundType": refundType,
         'tripRef': tripRef
     }

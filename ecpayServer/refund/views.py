@@ -15,7 +15,6 @@ def refund(request):
     
     auth_token = request.POST.get('auth_key')
     if not is_valid_token(auth_token):
-        print(auth_token)
         return HttpResponse('Unauthorized', status=401)
 
     order_ids_str = request.POST.getlist('orderId', [])
@@ -73,8 +72,8 @@ def refund(request):
                     moneyReturnToWallet += min(moneyViaWallet, totalCost*0.5)
                 totalReturn += totalCost*0.5
 
-            print(moneyReturnToWallet)
-            print(creditAmount)
+            print('moneyreturn: ', moneyReturnToWallet)
+            print('creditAmount:', creditAmount)
             # return the money paid via credit
 
             if creditAmount > 0:
@@ -123,7 +122,7 @@ def refund(request):
                             
                             if moneyViaWallet <= totalCost *0.5:
                                 refund_to_credit = round(totalCost*0.5)
-                                print(refund_to_credit)
+                                print('Refund to credit: ', refund_to_credit)
                                 
                                 try: 
                                     if refund_to_credit > 0:
@@ -195,7 +194,7 @@ def refund(request):
                         tradeDetails['driverEarned'] = driverEarned * 0.7
                         write_transaction_to_firebase(orderNo, tradeDetails)
 
-    print(moneyReturnToWallet)
+    print('moneyReturnToWallet: ', moneyReturnToWallet)
     if moneyReturnToWallet > 0:
         result = update_account_balance(user_ref, moneyReturnToWallet)
         if not result:
