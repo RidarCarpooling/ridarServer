@@ -80,14 +80,15 @@ def refund(request):
             if creditAmount > 0:
                 if paymentMethod == 'ecpay':
                     print('ecpay')
-                    try:
-                        result = search_single_transaction(creditRefundId, creditAmount)
-                        status = result['RtnValue']['status']
-                    except Exception as e:
-                        print('An exception occurred while searching transaction:', e)
-                        if startTime - current_time > timedelta(hours=24):
-                            create_refundFailed(user_ref, orderNo, tripRef, refundType)
-                        status = ''
+                    if not (startTime - current_time < timedelta(hours=24) and refundType == 'partial'):
+                        try:
+                            result = search_single_transaction(creditRefundId, creditAmount)
+                            status = result['RtnValue']['status']
+                        except Exception as e:
+                            print('An exception occurred while searching transaction:', e)
+                            if startTime - current_time > timedelta(hours=24):
+                                create_refundFailed(user_ref, orderNo, tripRef, refundType)
+                            status = ''
                         
 
                     try:
