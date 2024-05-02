@@ -12,7 +12,6 @@ import os
 
 
 def main(totalAmount, orderId, transactionTime, buyerId, tripReference):
-
     order_params = {
         'MerchantTradeNo':  orderId,
         # datetime.now().strftime("NO%Y%m%d%H%M%S"),
