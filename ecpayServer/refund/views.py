@@ -49,13 +49,13 @@ def refund(request):
             passengers += num_of_passengers
         except Exception as e:
             print('Transaction data not found', e)
-            create_refundFailed(user_ref, orderNo, tripRef)
+            create_refundFailed(user_ref, orderNo, tripRef, refundType)
             
         current_time = datetime.now()
         if current_time.time() >= datetime.strptime('12:15', '%H:%M').time() and \
                 current_time.time() <= datetime.strptime('12:40', '%H:%M').time() and \
                 paymentMethod == 'ecpay':
-            create_refundFailed(user_ref, orderNo, tripRef)
+            create_refundFailed(user_ref, orderNo, tripRef, refundType)
 
         start_timezone = startTime.tzinfo
         current_time = datetime.now(start_timezone)
@@ -141,7 +141,7 @@ def refund(request):
                     
                     except Exception as e:
                         print('An exception occurred while refund ecpay:', e)
-                        create_refundFailed(user_ref, orderNo, tripRef)
+                        create_refundFailed(user_ref, orderNo, tripRef, refundType)
 
 
                 elif paymentMethod == 'twqr':
@@ -171,7 +171,7 @@ def refund(request):
 
                     except Exception as e:
                         print('An exception occurred while refund twqr:', e)
-                        create_refundFailed(user_ref, orderNo, tripRef)
+                        create_refundFailed(user_ref, orderNo, tripRef, refundType)
 
             elif creditAmount == 0:
                 if refundType == 'full' or (refundType == 'partial' and timedelta(hours=72) < startTime - current_time):
