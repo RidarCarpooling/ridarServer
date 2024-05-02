@@ -324,7 +324,8 @@ def create_refundFailed(userRef, orderId, tripRef, refundType):
         'transactionIds': [orderId],
         'refundTime': datetime.now(),
         'tripRef': tripRef,
-        'refundType': refundType
+        'refundType': refundType,
+        'cancelledBy': 'server'
     }
     db.collection('refundFailed').add(refundFailed)
 
