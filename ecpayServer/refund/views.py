@@ -51,11 +51,11 @@ def refund(request):
             print('Transaction data not found', e)
             create_refundFailed(user_ref, orderNo, tripRef)
             
-        current_time = datetime.now()
-        if current_time.time() >= datetime.strptime('12:15', '%H:%M').time() and \
-                current_time.time() <= datetime.strptime('12:30', '%H:%M').time() and \
-                paymentMethod == 'ecpay':
-            return HttpResponseBadRequest("Cannot process request at this time")
+        # current_time = datetime.now()
+        # if current_time.time() >= datetime.strptime('12:15', '%H:%M').time() and \
+        #         current_time.time() <= datetime.strptime('12:30', '%H:%M').time() and \
+        #         paymentMethod == 'ecpay':
+            # create_refundFailed(user_ref, orderNo, tripRef)
 
         start_timezone = startTime.tzinfo
         current_time = datetime.now(start_timezone)
