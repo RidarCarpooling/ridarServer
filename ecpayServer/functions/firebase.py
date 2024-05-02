@@ -114,8 +114,6 @@ def add_trip_to_history(user_ref, finish_time, trip_ref, moneyViaWallet):
             # Update the user document with the new trip history list
             user_doc_ref.update({'trip_history': trip_history, 'account_balance': account_balance})
 
-            
-
             print('Add trip to history successfully.')
             return True
         else:
@@ -292,11 +290,8 @@ def update_account_balance(user_ref, moneyReturnToWallet):
             user_data = user_doc.to_dict()
             # Get the current trip history list
             account_balance = user_data.get('account_balance', 0)
-            print('Account balance before returning', account_balance)
-
             account_balance += moneyReturnToWallet
             user_doc_ref.update({'account_balance': account_balance})
-            print(account_balance)
             print('Refund to wallet successfully')
             return True
         else:

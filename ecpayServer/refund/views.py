@@ -203,7 +203,6 @@ def refund(request):
     
 
     email = request.POST.get('email', '')
-    print(email)
     name = request.POST.get('name', '')
     user_id = request.POST.get('user_id', '')
     if email == ''  and user_id != '':
